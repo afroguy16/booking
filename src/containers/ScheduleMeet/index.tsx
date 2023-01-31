@@ -1,3 +1,5 @@
 import SelectDate from "./components/SelectDate";
 
-export default () => <SelectDate onSelectDate={() => {}} />;
+const ScheduleMeet = () => <SelectDate onSelectDate={() => {}} />;
+
+export default ScheduleMeet;

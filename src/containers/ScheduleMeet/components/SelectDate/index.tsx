@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { SelectDatePropsI } from "../../../interfaces";
 
-export default ({ onSelectDate }: SelectDatePropsI) => {
+const SelectDate = ({ onSelectDate }: SelectDatePropsI) => {
   const [startDate, setStartDate] = useState(new Date());
 
   const onSelectDateHandler = (date: Date) => {
@@ -21,3 +21,5 @@ export default ({ onSelectDate }: SelectDatePropsI) => {
     </Box>
   );
 };
+
+export default SelectDate;

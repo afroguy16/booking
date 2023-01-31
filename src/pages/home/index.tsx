@@ -1,3 +1,5 @@
 import ScheduleMeet from "../../containers/ScheduleMeet";
 
-export default () => <ScheduleMeet />;
+const Home = () => <ScheduleMeet />;
+
+export default Home;
