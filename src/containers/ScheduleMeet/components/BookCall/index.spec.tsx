@@ -1,6 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import BookCall from ".";
+import userEvent from "@testing-library/user-event";
+
 import { HoursT } from "../../../types";
+
+import BookCall from ".";
 
 describe("ScheduleMeet Component - SelectDate", () => {
   const fakeUnavailableTimeSlots: Array<HoursT> = ["00:00", "02:00"];
@@ -22,8 +25,34 @@ describe("ScheduleMeet Component - SelectDate", () => {
     expect(unavailableOptionElements).toHaveLength(2);
   });
 
-  it("should activate a time slot for confirmation if any time slot is clicked", () => {});
-  it("should de-activate any active time slot for confirmation if the clear button is clicked", () => {});
+  it("should activate a time slot for confirmation if any time slot is clicked", async () => {
+    const user = userEvent.setup();
+    render(<BookCall unavailableTimeSlots={fakeUnavailableTimeSlots} />);
+
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    expect(selectButtonElement).toBeDisabled();
+
+    const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!;
+
+    await user.click(randomAvailableTimeSlot);
+    expect(selectButtonElement).toBeEnabled();
+  });
+
+  it("should de-activate any active time slot for confirmation if the clear button is clicked", async () => {
+    const user = userEvent.setup();
+    render(<BookCall unavailableTimeSlots={fakeUnavailableTimeSlots} />);
+
+    const clearButtonElement = screen.getByText(/clear time slot/i);
+    expect(clearButtonElement).toBeDisabled();
+
+    const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!;
+
+    await user.click(randomAvailableTimeSlot);
+    expect(clearButtonElement).toBeEnabled();
+
+    await user.click(clearButtonElement);
+    expect(clearButtonElement).toBeDisabled();
+  });
   it("should display a prompt to enter the reason for the call if the confirm selection button is clicked", () => {});
   it("should remove the prompt if the prompt is cancelled once activated", () => {});
   it("should send a payload with the reason for the call and date once the call booking is initiated", () => {});
