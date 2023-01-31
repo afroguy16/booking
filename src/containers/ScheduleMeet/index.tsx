@@ -19,10 +19,10 @@ const ScheduleMeet = () => {
     isSuccessful,
     isLoading,
     onSelectDate,
-    onSetError,
+    // onSetError,
     onClearError,
     onClearSuccess,
-    onSetBooking,
+    // onSetBooking,
   } = useBook();
 
   const hasMessage = !!error || isSuccessful;
@@ -66,8 +66,9 @@ const ScheduleMeet = () => {
         </Flex>
       )}
       <Box>
-        <SelectDate onSelectDate={() => {}} onClearMessages={() => {}} />
+        <SelectDate onSelectDate={onSelectDate} onClearMessages={() => {}} />
         <BookCall
+          isLoading={isLoading}
           unavailableTimeSlots={bookedTimeSlots}
           onBookCall={() => {}}
           onSendError={() => {}}

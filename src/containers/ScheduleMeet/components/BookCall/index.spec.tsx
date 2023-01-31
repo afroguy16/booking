@@ -16,16 +16,19 @@ describe("ScheduleMeet Component - SelectDate", () => {
   const mockedOnClearMessages = jest.fn();
   const fakeUnavailableTimeSlots: Array<HoursT> = ["00:00", "02:00"];
   let utils: HTMLElement;
+  let renderAgain: (ui: React.ReactElement) => void;
 
   beforeEach(() => {
-    const { baseElement } = render(
+    const { baseElement, rerender } = render(
       <BookCall
+        isLoading={false}
         unavailableTimeSlots={fakeUnavailableTimeSlots}
         onBookCall={mockedOnBookCall}
         onSendError={mockedOnSendError}
         onClearMessages={mockedOnClearMessages}
       />
     );
+    renderAgain = rerender;
     utils = baseElement;
   });
 
@@ -132,6 +135,29 @@ describe("ScheduleMeet Component - SelectDate", () => {
       time: "03:00",
       reason: fakeReasonForCall,
     });
+    jest.resetAllMocks();
+  });
+
+  it("should should loading if it is loading", async () => {
+    const user = userEvent.setup();
+    renderAgain(
+      <BookCall
+        isLoading={true}
+        unavailableTimeSlots={fakeUnavailableTimeSlots}
+        onBookCall={mockedOnBookCall}
+        onSendError={mockedOnSendError}
+        onClearMessages={mockedOnClearMessages}
+      />
+    );
+
+    const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
+    await user.click(randomAvailableTimeSlot);
+
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    await user.click(selectButtonElement);
+
+    const loadingText = screen.getByText("loading");
+    expect(loadingText).toBeInTheDocument();
     jest.resetAllMocks();
   });
 

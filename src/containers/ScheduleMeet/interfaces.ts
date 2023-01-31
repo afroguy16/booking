@@ -15,6 +15,7 @@ export interface BookCallErrorI {
 }
 
 export interface BookCallPropsI {
+  isLoading: boolean,
   unavailableTimeSlots: Array<HoursT>
   onBookCall: (payload: BookCallPayloadI) => void;
   onSendError: (payload: BookCallErrorI) => void;

@@ -5,6 +5,7 @@ import ScheduleMeet from ".";
 import { SUCCESS_MESSAGE } from "./constants";
 import useBook from "./hooks/use-book";
 import { UseBookReturnPayloadI } from "./interfaces";
+import { HoursT } from "./types";
 
 jest.mock("./hooks/use-book");
 
@@ -79,9 +80,61 @@ describe("ScheduleMeet", () => {
     expect(onClearError).not.toHaveBeenCalled();
   });
 
-  it("should set the selected date time in the BookCall child", () => {});
+  it("should set the selected date and time in the BookCall child", () => {
+    const fakeBookedTimeSlot: Array<HoursT> = [
+      "00:00",
+      "03:00",
+      "04:00",
+      "04:00", // duplicates will be filtered out by BookCall. This is an unlikely scenario because the endpoint won't send two blocked time
+    ];
+    jest.mocked(useBook).mockReturnValue({
+      ...returnedData,
+      bookedTimeSlots: fakeBookedTimeSlot,
+    });
 
-  it("should indicate loading if there is a network call loading", () => {});
+    const { baseElement } = render(<ScheduleMeet />);
+
+    const optionElements = baseElement.getElementsByClassName("unavailable");
+    expect(optionElements).toHaveLength(3);
+  });
+
+  it("should display loading if loading is received from the store", async () => {
+    const user = userEvent.setup();
+    jest.mocked(useBook).mockReturnValue({ ...returnedData, isLoading: true });
+    render(<ScheduleMeet />);
+
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", {
+        name: /select time slot/i,
+      })
+      .at(2)!; // "02:00"
+    await user.click(randomAvailableTimeSlot);
+
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    await user.click(selectButtonElement);
+
+    const loadingText = screen.getByText("loading");
+    expect(loadingText).toBeInTheDocument();
+  });
+
+  it("should not display loading if loading isn't received from the store", async () => {
+    const user = userEvent.setup();
+    jest.mocked(useBook).mockReturnValue({ ...returnedData });
+    render(<ScheduleMeet />);
+
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", {
+        name: /select time slot/i,
+      })
+      .at(2)!; // "02:00"
+    await user.click(randomAvailableTimeSlot);
+
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    await user.click(selectButtonElement);
+
+    const loadingText = screen.queryByText("loading");
+    expect(loadingText).not.toBeInTheDocument();
+  });
 
   it("should call onSelectDate when a date is selected from SelectDate", () => {});
 

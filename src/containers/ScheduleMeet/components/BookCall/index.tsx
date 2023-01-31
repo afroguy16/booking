@@ -26,8 +26,13 @@ import {
 import generateHourString from "./utils/generate-hour-string";
 
 const BookCall = (props: BookCallPropsI) => {
-  const { unavailableTimeSlots, onBookCall, onSendError, onClearMessages } =
-    props;
+  const {
+    isLoading,
+    unavailableTimeSlots,
+    onBookCall,
+    onSendError,
+    onClearMessages,
+  } = props;
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const isTimeSlotSelected = selectedTimeSlot !== "";
   const [selectedTimeSlotActivated, setSelectedTimeSlotActivated] =
@@ -48,7 +53,10 @@ const BookCall = (props: BookCallPropsI) => {
   const hashedUnavailableTimeSlots = useMemo(() => {
     const hash: { [key: string]: string } = {};
     unavailableTimeSlots.forEach((timeSlot) => {
-      hash[timeSlot] = timeSlot;
+      // This check is unlikely, but it ensures that there are no duplicates
+      if (hash[timeSlot] === undefined) {
+        hash[timeSlot] = timeSlot;
+      }
     });
     return hash;
   }, [unavailableTimeSlots]);
@@ -76,6 +84,7 @@ const BookCall = (props: BookCallPropsI) => {
       dailyTimeSlot.map((timeSlot) => (
         <ListItem
           role={"option"}
+          aria-label="select time slot"
           key={timeSlot}
           className={[
             isTimeTaken(timeSlot) ? "unavailable" : "",
@@ -156,10 +165,11 @@ const BookCall = (props: BookCallPropsI) => {
             <Button
               colorScheme="blue"
               mr={3}
+              isLoading={isLoading}
               onClick={onBookCallHandler}
               isDisabled={!isValidReason}
             >
-              Book call
+              {isLoading ? "loading" : "Book call"}
             </Button>
           </ModalFooter>
         </ModalContent>
