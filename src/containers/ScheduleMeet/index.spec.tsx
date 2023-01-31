@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import ScheduleMeet from ".";
+import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/BookCall/constants";
 import { SUCCESS_MESSAGE } from "./constants";
 import useBook from "./hooks/use-book";
 import { UseBookReturnPayloadI } from "./interfaces";
@@ -138,7 +139,40 @@ describe("ScheduleMeet", () => {
 
   it("should call onSelectDate when a date is selected from SelectDate", () => {});
 
-  it("should call onSetError when an error is sent from BookCall", () => {});
+  it("should call onSetError when an error is sent from BookCall", async () => {
+    const { onSetError } = returnedData;
+    const fakeReasonForCall = "Just some random reason for the call";
+    const fakeBookedTimeSlot: Array<HoursT> = [
+      "00:00",
+      "03:00",
+      "04:00",
+      "04:00", // duplicates will be filtered out by BookCall. This is an unlikely scenario because the endpoint won't send two blocked time
+    ];
+    const user = userEvent.setup();
+    jest.mocked(useBook).mockReturnValue({
+      ...returnedData,
+      bookedTimeSlots: fakeBookedTimeSlot,
+    });
+    render(<ScheduleMeet />);
+
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", {
+        name: /select time slot/i,
+      })
+      .at(4)!; // "04:00"
+    await user.click(randomAvailableTimeSlot);
+
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    await user.click(selectButtonElement);
+
+    const inputFieldElement = screen.getByRole("textbox");
+    const bookCallButtonElement = screen.getByText(/book call/i);
+    await user.type(inputFieldElement, fakeReasonForCall);
+    await user.click(bookCallButtonElement);
+    expect(onSetError).toHaveBeenCalledWith({
+      message: ERROR_TIME_SLOT_UNAVAILABLE,
+    });
+  });
 
   it("should package the payload and call onSetBooking with the payload payLoad once a Booking date is confirmed", () => {});
 });

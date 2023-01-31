@@ -19,7 +19,7 @@ const ScheduleMeet = () => {
     isSuccessful,
     isLoading,
     onSelectDate,
-    // onSetError,
+    onSetError,
     onClearError,
     onClearSuccess,
     // onSetBooking,
@@ -71,7 +71,7 @@ const ScheduleMeet = () => {
           isLoading={isLoading}
           unavailableTimeSlots={bookedTimeSlots}
           onBookCall={() => {}}
-          onSendError={() => {}}
+          onSendError={onSetError}
           onClearMessages={() => {}}
         />
       </Box>
