@@ -1,25 +1,12 @@
 import { ListItem, UnorderedList } from "@chakra-ui/react";
 import { useMemo } from "react";
+import generateHourString from "./utils/generate-hour-string";
 
 const BookCall = () => {
-  const generateHour = (hour: number) => {
-    if (hour < 0 || hour > 24) {
-      throw new Error("Out of bound. Hour must be withing 0 and 24");
-    }
-
-    const formattedHour = hour.toString();
-
-    if (formattedHour.length > 1) {
-      return `${hour}:00`;
-    }
-
-    return `0${hour}:00`;
-  };
-
   const timeSlots = useMemo(() => {
     let timeSlots = new Array(24);
     for (let i = 0; i < 24; i++) {
-      timeSlots[i] = generateHour(i);
+      timeSlots[i] = generateHourString(i);
     }
     return timeSlots;
   }, []);
