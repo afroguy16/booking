@@ -4,11 +4,12 @@ import SelectDate from "./components/SelectDate";
 
 const ScheduleMeet = () => (
   <Box>
-    <SelectDate onSelectDate={() => {}} />
+    <SelectDate onSelectDate={() => {}} onClearError={() => {}} />
     <BookCall
       unavailableTimeSlots={[]}
       onBookCall={() => {}}
       onSendError={() => {}}
+      onClearError={() => {}}
     />
   </Box>
 );

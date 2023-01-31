@@ -26,7 +26,7 @@ import {
 import generateHourString from "./utils/generate-hour-string";
 
 const BookCall = (props: BookCallPropsI) => {
-  const { unavailableTimeSlots, onBookCall, onSendError } = props;
+  const { unavailableTimeSlots, onBookCall, onSendError, onClearError } = props;
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const isTimeSlotSelected = selectedTimeSlot !== "";
   const [selectedTimeSlotActivated, setSelectedTimeSlotActivated] =
@@ -62,13 +62,18 @@ const BookCall = (props: BookCallPropsI) => {
           role={"option"}
           key={timeSlot}
           className={isTimeTaken(timeSlot) ? "unavailable" : ""}
-          onClick={() => setSelectedTimeSlot(timeSlot)}
+          onClick={() => onSelectTimeSlot(timeSlot)}
         >
           {timeSlot}
         </ListItem>
       )),
     [dailyTimeSlot]
   );
+
+  const onSelectTimeSlot = (timeSlot: string) => {
+    setSelectedTimeSlot(timeSlot);
+    onClearError();
+  };
 
   const onBookCallHandler = () => {
     if (isTimeTaken(selectedTimeSlot)) {
@@ -86,7 +91,7 @@ const BookCall = (props: BookCallPropsI) => {
           variant="outline"
           colorScheme="teal"
           isDisabled={!isTimeSlotSelected}
-          onClick={() => setSelectedTimeSlot("")}
+          onClick={() => onSelectTimeSlot("")}
         >
           Clear time slot
         </Button>

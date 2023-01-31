@@ -14,11 +14,18 @@ describe("ScheduleMeet Component - SelectDate", () => {
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
 
     const mockedOnSelectDate = jest.fn();
-    render(<SelectDate onSelectDate={mockedOnSelectDate} />);
+    const mockedOnClearError = jest.fn();
+    render(
+      <SelectDate
+        onSelectDate={mockedOnSelectDate}
+        onClearError={mockedOnClearError}
+      />
+    );
 
     const eleventhDayElement = screen.getAllByRole("option").at(10);
     fireEvent.click(eleventhDayElement!); // use fireEvent instead of userEvent because userEvent is asynchronous and that doesn't play nicely with fakeTimers
 
     expect(mockedOnSelectDate).toHaveBeenCalledWith(selectedDate);
+    expect(mockedOnClearError).toHaveBeenCalled();
   });
 });

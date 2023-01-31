@@ -6,13 +6,14 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { SelectDatePropsI } from "../../../interfaces";
 
-const SelectDate = ({ onSelectDate }: SelectDatePropsI) => {
+const SelectDate = ({ onSelectDate, onClearError }: SelectDatePropsI) => {
   const [startDate, setStartDate] = useState(new Date());
 
   const onSelectDateHandler = (date: Date) => {
     const formattedDate = format(date, "dd.MM.yyyy");
     setStartDate(date);
     onSelectDate(formattedDate);
+    onClearError();
   };
 
   return (
