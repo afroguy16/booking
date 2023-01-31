@@ -4,16 +4,16 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { SelectDatePropsI } from "../../../interfaces";
+import { SelectDatePropsI } from "../../interfaces";
 
-const SelectDate = ({ onSelectDate, onClearError }: SelectDatePropsI) => {
+const SelectDate = ({ onSelectDate, onClearMessages }: SelectDatePropsI) => {
   const [startDate, setStartDate] = useState(new Date());
 
   const onSelectDateHandler = (date: Date) => {
     const formattedDate = format(date, "dd.MM.yyyy");
     setStartDate(date);
     onSelectDate(formattedDate);
-    onClearError();
+    onClearMessages();
   };
 
   return (

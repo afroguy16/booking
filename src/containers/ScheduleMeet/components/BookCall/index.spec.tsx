@@ -5,7 +5,7 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { HoursT } from "../../../types";
+import { HoursT } from "../../types";
 
 import BookCall from ".";
 import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
@@ -13,7 +13,7 @@ import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 describe("ScheduleMeet Component - SelectDate", () => {
   const mockedOnBookCall = jest.fn();
   const mockedOnSendError = jest.fn();
-  const mockedOnClearError = jest.fn();
+  const mockedOnClearMessages = jest.fn();
   const fakeUnavailableTimeSlots: Array<HoursT> = ["00:00", "02:00"];
   let utils: HTMLElement;
 
@@ -23,7 +23,7 @@ describe("ScheduleMeet Component - SelectDate", () => {
         unavailableTimeSlots={fakeUnavailableTimeSlots}
         onBookCall={mockedOnBookCall}
         onSendError={mockedOnSendError}
-        onClearError={mockedOnClearError}
+        onClearMessages={mockedOnClearMessages}
       />
     );
     utils = baseElement;
@@ -40,7 +40,7 @@ describe("ScheduleMeet Component - SelectDate", () => {
     expect(unavailableOptionElements).toHaveLength(2);
   });
 
-  it("should activate a time slot for confirmation and clear any active error if any time slot is clicked", async () => {
+  it("should activate a time slot for confirmation and call the clearMessages callback if any time slot is clicked", async () => {
     const user = userEvent.setup();
     const selectButtonElement = screen.getByText(/select time slot/i);
     expect(selectButtonElement).toBeDisabled();
@@ -51,11 +51,11 @@ describe("ScheduleMeet Component - SelectDate", () => {
     await user.click(randomAvailableTimeSlot);
     expect(selectButtonElement).toBeEnabled();
     expect(randomAvailableTimeSlot).toHaveClass("active");
-    expect(mockedOnClearError).toHaveBeenCalled();
+    expect(mockedOnClearMessages).toHaveBeenCalled();
     jest.resetAllMocks();
   });
 
-  it("should de-select any active time slot for confirmation and clear any active error if the clear button is clicked", async () => {
+  it("should de-select any active time slot for confirmation and call the clearMessages callback if the clear button is clicked", async () => {
     const user = userEvent.setup();
     const clearButtonElement = screen.getByText(/clear time slot/i);
     expect(clearButtonElement).toBeDisabled();
@@ -67,7 +67,7 @@ describe("ScheduleMeet Component - SelectDate", () => {
 
     await user.click(clearButtonElement);
     expect(clearButtonElement).toBeDisabled();
-    expect(mockedOnClearError).toHaveBeenCalledTimes(2);
+    expect(mockedOnClearMessages).toHaveBeenCalledTimes(2);
     jest.resetAllMocks();
   });
 
@@ -159,5 +159,3 @@ describe("ScheduleMeet Component - SelectDate", () => {
     jest.resetAllMocks();
   });
 });
-
-// item should have the selected class once clicked

@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
-import { BookCallPropsI } from "../../../interfaces";
+import { BookCallPropsI } from "../../interfaces";
 import {
   ERROR_TIME_SLOT_UNAVAILABLE,
   MINIMUM_REASON_CHAR_LENGTH,
@@ -26,7 +26,8 @@ import {
 import generateHourString from "./utils/generate-hour-string";
 
 const BookCall = (props: BookCallPropsI) => {
-  const { unavailableTimeSlots, onBookCall, onSendError, onClearError } = props;
+  const { unavailableTimeSlots, onBookCall, onSendError, onClearMessages } =
+    props;
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const isTimeSlotSelected = selectedTimeSlot !== "";
   const [selectedTimeSlotActivated, setSelectedTimeSlotActivated] =
@@ -65,9 +66,9 @@ const BookCall = (props: BookCallPropsI) => {
   const onSelectTimeSlot = useCallback(
     (timeSlot: string) => {
       setSelectedTimeSlot(timeSlot);
-      onClearError();
+      onClearMessages();
     },
-    [onClearError]
+    [onClearMessages]
   );
 
   const dailyTimeSlotElements = useMemo(
