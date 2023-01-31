@@ -16,7 +16,7 @@ import {
   FormHelperText,
   FormControl,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { BookCallPropsI } from "../../../interfaces";
 import {
@@ -52,8 +52,23 @@ const BookCall = (props: BookCallPropsI) => {
     return hash;
   }, [unavailableTimeSlots]);
 
-  const isTimeTaken = (hour: string) =>
-    hashedUnavailableTimeSlots[hour] !== undefined;
+  const isTimeTaken = useCallback(
+    (hour: string) => hashedUnavailableTimeSlots[hour] !== undefined,
+    [hashedUnavailableTimeSlots]
+  );
+
+  const isSelectedTimeSlot = useCallback(
+    (hour: string) => selectedTimeSlot === hour,
+    [selectedTimeSlot]
+  );
+
+  const onSelectTimeSlot = useCallback(
+    (timeSlot: string) => {
+      setSelectedTimeSlot(timeSlot);
+      onClearError();
+    },
+    [onClearError]
+  );
 
   const dailyTimeSlotElements = useMemo(
     () =>
@@ -61,19 +76,19 @@ const BookCall = (props: BookCallPropsI) => {
         <ListItem
           role={"option"}
           key={timeSlot}
-          className={isTimeTaken(timeSlot) ? "unavailable" : ""}
+          className={[
+            isTimeTaken(timeSlot) ? "unavailable" : "",
+            isSelectedTimeSlot(timeSlot) ? "active" : "",
+          ]
+            .join(" ")
+            .trim()}
           onClick={() => onSelectTimeSlot(timeSlot)}
         >
           {timeSlot}
         </ListItem>
       )),
-    [dailyTimeSlot]
+    [dailyTimeSlot, isTimeTaken, isSelectedTimeSlot, onSelectTimeSlot]
   );
-
-  const onSelectTimeSlot = (timeSlot: string) => {
-    setSelectedTimeSlot(timeSlot);
-    onClearError();
-  };
 
   const onBookCallHandler = () => {
     if (isTimeTaken(selectedTimeSlot)) {

@@ -46,9 +46,11 @@ describe("ScheduleMeet Component - SelectDate", () => {
     expect(selectButtonElement).toBeDisabled();
 
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!;
+    expect(randomAvailableTimeSlot).not.toHaveClass("active");
 
     await user.click(randomAvailableTimeSlot);
     expect(selectButtonElement).toBeEnabled();
+    expect(randomAvailableTimeSlot).toHaveClass("active");
     expect(mockedOnClearError).toHaveBeenCalled();
     jest.resetAllMocks();
   });
