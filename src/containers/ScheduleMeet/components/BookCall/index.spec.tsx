@@ -8,9 +8,11 @@ import userEvent from "@testing-library/user-event";
 import { HoursT } from "../../../types";
 
 import BookCall from ".";
+import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 
 describe("ScheduleMeet Component - SelectDate", () => {
   const mockedOnBookCall = jest.fn();
+  const mockedOnSendError = jest.fn();
   const fakeUnavailableTimeSlots: Array<HoursT> = ["00:00", "02:00"];
   let utils: HTMLElement;
 
@@ -19,6 +21,7 @@ describe("ScheduleMeet Component - SelectDate", () => {
       <BookCall
         unavailableTimeSlots={fakeUnavailableTimeSlots}
         onBookCall={mockedOnBookCall}
+        onSendError={mockedOnSendError}
       />
     );
     utils = baseElement;
@@ -124,15 +127,27 @@ describe("ScheduleMeet Component - SelectDate", () => {
     jest.resetAllMocks();
   });
 
-  it("should send an error if date that has already been taken is selected", () => {});
-});
+  // TODO - A better UX would be to disable the slots, so they aren't clickable
+  it("should send an error if date that has already been taken is selected", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
+    const randomAvailableTimeSlot = screen.getAllByRole("option").at(2)!; // "02:00" - from the "fakeUnavailableTimeSlots" variable, we can see that "02:00" is already taken.
+    await user.click(randomAvailableTimeSlot);
 
-// list out 24 slots to represent each hour of the day
-// Allocate each box to each hour
-// select a slot
-//   confirm selection
-//     enter a reason for the call
-//       >> send payload that is time and reason for the call
-//   cancel selection
-//   >> send error message to the parent
-// clear selection
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    await user.click(selectButtonElement);
+
+    const inputFieldElement = screen.getByRole("textbox");
+    const bookCallButtonElement = screen.getByText(/book call/i);
+    expect(bookCallButtonElement).toBeDisabled();
+
+    await user.type(inputFieldElement, fakeReasonForCall);
+    expect(bookCallButtonElement).toBeEnabled();
+
+    await user.click(bookCallButtonElement);
+    expect(mockedOnSendError).toHaveBeenCalledWith({
+      message: ERROR_TIME_SLOT_UNAVAILABLE,
+    });
+    jest.resetAllMocks();
+  });
+});

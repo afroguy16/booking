@@ -11,7 +11,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Input,
   Textarea,
   Text,
   FormHelperText,
@@ -20,11 +19,14 @@ import {
 import { useMemo, useState } from "react";
 
 import { BookCallPropsI } from "../../../interfaces";
-import { MINIMUM_REASON_CHAR_LENGTH } from "./constants";
+import {
+  ERROR_TIME_SLOT_UNAVAILABLE,
+  MINIMUM_REASON_CHAR_LENGTH,
+} from "./constants";
 import generateHourString from "./utils/generate-hour-string";
 
 const BookCall = (props: BookCallPropsI) => {
-  const { unavailableTimeSlots, onBookCall } = props;
+  const { unavailableTimeSlots, onBookCall, onSendError } = props;
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const isTimeSlotSelected = selectedTimeSlot !== "";
   const [selectedTimeSlotActivated, setSelectedTimeSlotActivated] =
@@ -69,6 +71,9 @@ const BookCall = (props: BookCallPropsI) => {
   );
 
   const onBookCallHandler = () => {
+    if (isTimeTaken(selectedTimeSlot)) {
+      return onSendError({ message: ERROR_TIME_SLOT_UNAVAILABLE });
+    }
     onBookCall({ time: selectedTimeSlot, reason: callReason });
     setSelectedTimeSlotActivated(false);
   };
