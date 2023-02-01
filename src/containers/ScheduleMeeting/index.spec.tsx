@@ -246,7 +246,7 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
   });
 
   it("should call onSelectDate when a date is selected from SelectDate", () => {
-    const fakeToday = "01.01.2023";
+    const fakeToday = "2023-01-01";
     const { onSelectDate } = returnedData;
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
     jest.mocked(useBook).mockReturnValue({ ...returnedData });
@@ -256,7 +256,7 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
   });
 
   it("should package the payload and call onSetBooking with the payload payLoad once a Booking is confirmed", () => {
-    const fakeToday = "01.01.2023";
+    const fakeToday = "2023-01-01";
     const fakeReasonForCall = "Just some random reason for the call";
     const { onSetBooking } = returnedData;
 
@@ -282,7 +282,7 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
     fireEvent.click(bookCallButtonElement);
     expect(onSetBooking).toHaveBeenCalledWith({
       time: "04:00",
-      date: "01.01.2023",
+      date: "2023-01-01",
       reason: fakeReasonForCall,
     });
   });

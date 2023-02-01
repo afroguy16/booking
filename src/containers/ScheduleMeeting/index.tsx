@@ -30,6 +30,8 @@ const ScheduleMeeting = () => {
     onSetBooking,
   } = useBook();
 
+  console.log(selectedDateBookedTimeSlots);
+
   const hasMessage = !!error || isSuccessful;
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<SelectTimePayloadI>({

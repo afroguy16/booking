@@ -7,7 +7,7 @@ const useBook = (): UseBookReturnPayloadI => {
   const [error, setError] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const mentorsTotalSchedule = useRef({ mentor: { name: '', time_zone: '' }, schedule: {} })
+  const mentorsTotalSchedule = useRef({ mentor: { name: '', time_zone: '' }, schedule: {} as { [key: string]: Array<HourT> } })
   const [selectedDateSchedule, setSelectedDateSchedule] = useState<MentorScheduleAttributesI>({ date: '', timeCollection: [] });
 
   const fetchMentorSchedule = async () => {
@@ -51,6 +51,8 @@ const useBook = (): UseBookReturnPayloadI => {
   }
 
   const onSelectDate = async (date: string) => {
+    console.log(date)
+    setIsLoading(true)
     if (date !== selectedDateSchedule.date) {
       // only make call and call the expensive functions above ones
       if (Object.keys(mentorsTotalSchedule.current.schedule).length < 1) {
@@ -66,11 +68,14 @@ const useBook = (): UseBookReturnPayloadI => {
           // Overwrite error
           console.log(e)
           setError('Something went wrong')
+          setIsLoading(false)
         }
       } else {
-        console.log(mentorsTotalSchedule.current, 'loaded mentor')
+        console.log(mentorsTotalSchedule.current.schedule)
+        setSelectedDateSchedule({ date, timeCollection: mentorsTotalSchedule.current.schedule[date] })
       }
     }
+    setIsLoading(false)
   }
 
   const onSetBooking = (payload: ScheduleMeetingPayloadI) => {

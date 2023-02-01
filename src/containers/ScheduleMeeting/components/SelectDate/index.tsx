@@ -12,7 +12,7 @@ const SelectDate = ({ onSelectDate, onClearMessages }: SelectDatePropsI) => {
 
   const onSelectDateHandler = useCallback(
     (date: Date) => {
-      const formattedDate = format(date, "dd.MM.yyyy");
+      const formattedDate = format(date, "yyyy-MM-dd");
       setStartDate(date);
       onSelectDate(formattedDate);
       onClearMessages();

@@ -11,7 +11,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
   afterEach(jest.resetAllMocks);
 
   it("should call onSelectDate callback with the selected date as a formatted string as soon as the component loads", () => {
-    const fakeToday = "01.01.2023";
+    const fakeToday = "2023-01-01";
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
 
     const mockedOnSelectDate = jest.fn();
@@ -28,8 +28,8 @@ describe("ScheduleMeeting Component - SelectDate", () => {
   });
 
   it("should call onSelectDate callback with the selected date as a formatted string if a date is selected", () => {
-    const fakeToday = "2023.01.01";
-    const selectedDate = "11.01.2023";
+    const fakeToday = "2023-01-01";
+    const selectedDate = "2023-01-11";
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
 
     const mockedOnSelectDate = jest.fn();
