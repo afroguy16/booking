@@ -1,17 +1,12 @@
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-} from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { HoursT } from "../../types";
 
 import SelectTime from ".";
-import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 
 describe("ScheduleMeeting Component - SelectDate", () => {
-  const mockedOnBookCall = jest.fn();
+  const mockedOnConfirmSelectTime = jest.fn();
   const mockedOnSendError = jest.fn();
   const mockedOnClearMessages = jest.fn();
   const fakeUnavailableTimeSlots: Array<HoursT> = ["00:00", "02:00"];
@@ -23,7 +18,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
       <SelectTime
         isLoading={false}
         unavailableTimeSlots={fakeUnavailableTimeSlots}
-        onBookCall={mockedOnBookCall}
+        onSelectTimeSlot={mockedOnConfirmSelectTime} //TODO - fix this
         onSendError={mockedOnSendError}
         onClearMessages={mockedOnClearMessages}
       />
@@ -58,130 +53,30 @@ describe("ScheduleMeeting Component - SelectDate", () => {
     jest.resetAllMocks();
   });
 
-  it("should de-select any active time slot for confirmation and call the clearMessages callback if the clear button is clicked", async () => {
+  it("should de-select any active time slot for confirmation and call the clearMessages callback if 'the clear time slot' button is clicked", async () => {
     const user = userEvent.setup();
     const clearButtonElement = screen.getByText(/clear time slot/i);
     expect(clearButtonElement).toBeDisabled();
 
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!;
 
-    await user.click(randomAvailableTimeSlot);
+    await user.click(randomAvailableTimeSlot); // first mockedOnClearMessages call
+    expect(mockedOnClearMessages).toHaveBeenCalledTimes(1);
     expect(clearButtonElement).toBeEnabled();
 
-    await user.click(clearButtonElement);
+    await user.click(clearButtonElement); // second mockedOnClearMessages call
     expect(clearButtonElement).toBeDisabled();
     expect(mockedOnClearMessages).toHaveBeenCalledTimes(2);
     jest.resetAllMocks();
   });
 
-  it("should display a prompt for the user enter the reason for the call if the confirm selection button is clicked", async () => {
+  it("should send onConfirm time with the time as payload if the 'confirm time slot' button is clicked", async () => {
     const user = userEvent.setup();
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
     await user.click(randomAvailableTimeSlot);
 
     const selectButtonElement = screen.getByText(/select time slot/i);
     await user.click(selectButtonElement);
-
-    const inputFieldElement = screen.getByRole("textbox");
-    expect(inputFieldElement).toBeInTheDocument();
-  });
-
-  it("the button should be disabled until the user types a valid reason once the call reason prompt is displayed", async () => {
-    const user = userEvent.setup();
-    const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-    await user.click(randomAvailableTimeSlot);
-
-    const selectButtonElement = screen.getByText(/select time slot/i);
-    await user.click(selectButtonElement);
-
-    const bookCallButtonElement = screen.getByText(/book call/i);
-    expect(bookCallButtonElement).toBeDisabled();
-  });
-
-  it("should remove the prompt if the prompt is cancelled once the 'call reason prompt' is displayed", async () => {
-    const user = userEvent.setup();
-    const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-    await user.click(randomAvailableTimeSlot);
-
-    const selectButtonElement = screen.getByText(/select time slot/i);
-    await user.click(selectButtonElement);
-
-    const cancelCallButtonElement = screen.getByText(/cancel/i);
-    await user.click(cancelCallButtonElement);
-
-    const inputFieldElement = screen.getByRole("textbox");
-    await waitForElementToBeRemoved(inputFieldElement);
-    expect(inputFieldElement).not.toBeInTheDocument();
-  });
-
-  it("should send a payload with the reason for the call and date once the call booking is initiated", async () => {
-    const fakeReasonForCall = "Just some random reason for the call";
-    const user = userEvent.setup();
-    const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-    await user.click(randomAvailableTimeSlot);
-
-    const selectButtonElement = screen.getByText(/select time slot/i);
-    await user.click(selectButtonElement);
-
-    const inputFieldElement = screen.getByRole("textbox");
-    const bookCallButtonElement = screen.getByText(/book call/i);
-    expect(bookCallButtonElement).toBeDisabled();
-
-    await user.type(inputFieldElement, fakeReasonForCall);
-    expect(bookCallButtonElement).toBeEnabled();
-
-    await user.click(bookCallButtonElement);
-    expect(mockedOnBookCall).toHaveBeenCalledWith({
-      time: "03:00",
-      reason: fakeReasonForCall,
-    });
-    jest.resetAllMocks();
-  });
-
-  it("should should loading if it is loading", async () => {
-    const user = userEvent.setup();
-    renderAgain(
-      <SelectTime
-        isLoading={true}
-        unavailableTimeSlots={fakeUnavailableTimeSlots}
-        onBookCall={mockedOnBookCall}
-        onSendError={mockedOnSendError}
-        onClearMessages={mockedOnClearMessages}
-      />
-    );
-
-    const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-    await user.click(randomAvailableTimeSlot);
-
-    const selectButtonElement = screen.getByText(/select time slot/i);
-    await user.click(selectButtonElement);
-
-    const loadingText = screen.getByText("loading");
-    expect(loadingText).toBeInTheDocument();
-    jest.resetAllMocks();
-  });
-
-  // TODO - A better UX would be to disable the slots, so they aren't clickable
-  it("should send an error if date that has already been taken is selected", async () => {
-    const fakeReasonForCall = "Just some random reason for the call";
-    const user = userEvent.setup();
-    const randomAvailableTimeSlot = screen.getAllByRole("option").at(2)!; // "02:00" - from the "fakeUnavailableTimeSlots" variable, we can see that "02:00" is already taken.
-    await user.click(randomAvailableTimeSlot);
-
-    const selectButtonElement = screen.getByText(/select time slot/i);
-    await user.click(selectButtonElement);
-
-    const inputFieldElement = screen.getByRole("textbox");
-    const bookCallButtonElement = screen.getByText(/book call/i);
-    expect(bookCallButtonElement).toBeDisabled();
-
-    await user.type(inputFieldElement, fakeReasonForCall);
-    expect(bookCallButtonElement).toBeEnabled();
-
-    await user.click(bookCallButtonElement);
-    expect(mockedOnSendError).toHaveBeenCalledWith({
-      message: ERROR_TIME_SLOT_UNAVAILABLE,
-    });
-    jest.resetAllMocks();
+    expect(mockedOnConfirmSelectTime).toHaveBeenCalledWith("03:00");
   });
 });

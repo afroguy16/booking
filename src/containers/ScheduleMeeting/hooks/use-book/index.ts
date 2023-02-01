@@ -1,7 +1,7 @@
-import { ScheduleMeetPayloadI, UseBookReturnPayloadI } from "../../interfaces";
+import { ScheduleMeetingPayloadI, UseBookReturnPayloadI } from "../../interfaces";
 
 const useBook = (): UseBookReturnPayloadI => {
-  const onSetBooking = (payload: ScheduleMeetPayloadI) => {
+  const onSetBooking = (payload: ScheduleMeetingPayloadI) => {
     console.log(payload)
   }
   return ({

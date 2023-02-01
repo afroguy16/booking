@@ -14,6 +14,7 @@ import { SelectTimePayloadI } from "./interfaces";
 import useBook from "./hooks/use-book";
 import SelectDate from "./components/SelectDate";
 import SelectTime from "./components/SelectTime";
+import ConfirmMeeting from "./components/ConfirmMeeting";
 
 const ScheduleMeeting = () => {
   const {
@@ -37,6 +38,17 @@ const ScheduleMeeting = () => {
     }
     onClearSuccess();
   };
+
+  // const onBookCallHandler = () => {
+  //   // if (isTimeTaken) {
+  //   //   return onSendError({
+  //   //     path: "ConfirmMeeting",
+  //   //     message: ERROR_TIME_SLOT_UNAVAILABLE,
+  //   //   });
+  //   // }
+  //   onConfirmBooking(callReason);
+  //   // setSelectedTimeSlotActivated(false);
+  // };
 
   const onSelectDateHandler = (date: string) => {
     setSelectedDate(date);
@@ -91,11 +103,14 @@ const ScheduleMeeting = () => {
         <SelectTime
           isLoading={isLoading}
           unavailableTimeSlots={bookedTimeSlots}
-          onBookCall={onSetBookingHandler}
+          // onBookCall={onSetBookingHandler}
+          onSelectTimeSlot={() => {}} //TODO - fix
           onSendError={onSetError}
           onClearMessages={onClearMessage}
         />
       </Box>
+
+      <ConfirmMeeting isLoading={isLoading} onConfirmBooking={() => {}} />
     </Box>
   );
 };
