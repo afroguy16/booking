@@ -6,12 +6,12 @@ import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 import { SUCCESS_MESSAGE } from "./constants";
 import useBook from "./hooks/use-book";
 import { UseBookReturnPayloadI } from "./interfaces";
-import { HoursT } from "./types";
+import { HourT } from "./types";
 
 jest.mock("./hooks/use-book");
 
 const returnedData: UseBookReturnPayloadI = {
-  bookedTimeSlots: [],
+  selectedDateBookedTimeSlots: [],
   error: "",
   isSuccessful: false,
   isLoading: false,
@@ -144,7 +144,7 @@ describe("ScheduleMeeting Container", () => {
   });
 
   it("should set the selected date and time in the SelectTime child", () => {
-    const fakeBookedTimeSlot: Array<HoursT> = [
+    const fakeBookedTimeSlot: Array<HourT> = [
       "00:00",
       "03:00",
       "04:00",
@@ -152,7 +152,7 @@ describe("ScheduleMeeting Container", () => {
     ];
     jest.mocked(useBook).mockReturnValue({
       ...returnedData,
-      bookedTimeSlots: fakeBookedTimeSlot,
+      selectedDateBookedTimeSlots: fakeBookedTimeSlot,
     });
 
     const { baseElement } = render(<ScheduleMeeting />);
@@ -203,7 +203,7 @@ describe("ScheduleMeeting Container", () => {
   it("should call onSetError if the requested time slot isn't available", async () => {
     const { onSetError } = returnedData;
     const fakeReasonForCall = "Just some random reason for the call";
-    const fakeBookedTimeSlot: Array<HoursT> = [
+    const fakeBookedTimeSlot: Array<HourT> = [
       "00:00",
       "03:00",
       "04:00",
@@ -212,7 +212,7 @@ describe("ScheduleMeeting Container", () => {
     const user = userEvent.setup();
     jest.mocked(useBook).mockReturnValue({
       ...returnedData,
-      bookedTimeSlots: fakeBookedTimeSlot,
+      selectedDateBookedTimeSlots: fakeBookedTimeSlot,
     });
     render(<ScheduleMeeting />);
 

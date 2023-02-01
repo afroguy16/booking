@@ -1,4 +1,4 @@
-import { HoursT } from "./types"
+import { HourT } from "./types"
 
 export interface SelectTimePayloadI {
   time: string;
@@ -16,8 +16,28 @@ export interface ScheduleMeetingErrorI {
   message: string
 }
 
+export interface MentorAttributesI {
+  name: string,
+  time_zone: string
+}
+
+export interface MentorScheduleAttributesI {
+  date: string,
+  timeCollection: Array<HourT>
+}
+
+export interface MentorScheduleResponsePayloadI {
+  mentor: MentorAttributesI,
+  calendar: Array<{ date_time: string }>
+}
+
+export interface MentorScheduleCollectionI {
+  mentor: MentorAttributesI,
+  schedule: Array<MentorScheduleAttributesI>
+}
+
 export interface UseBookReturnPayloadI {
-  bookedTimeSlots: Array<HoursT>;
+  selectedDateBookedTimeSlots: Array<HourT>;
   error: string;
   isSuccessful: boolean;
   isLoading: boolean;
@@ -35,7 +55,7 @@ export interface SelectDatePropsI {
 
 export interface BookCallPropsI { // TODO - rename this
   isLoading: boolean;
-  unavailableTimeSlots: Array<HoursT>
+  unavailableTimeSlots: Array<HourT>
   onSelectTimeSlot: (payload: SelectTimePayloadI) => void;
   onSendError: (error: ScheduleMeetingErrorI) => void;
   onClearMessages: () => void;

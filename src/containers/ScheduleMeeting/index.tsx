@@ -19,7 +19,7 @@ import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 
 const ScheduleMeeting = () => {
   const {
-    bookedTimeSlots,
+    selectedDateBookedTimeSlots,
     error,
     isSuccessful,
     isLoading,
@@ -106,7 +106,7 @@ const ScheduleMeeting = () => {
         />
         <SelectTime
           isLoading={isLoading}
-          unavailableTimeSlots={bookedTimeSlots}
+          unavailableTimeSlots={selectedDateBookedTimeSlots}
           onSelectTimeSlot={onSelectTimeSlotHandler}
           onSendError={onSetError}
           onClearMessages={onClearMessage}

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { HoursT } from "../../types";
+import { HourT } from "../../types";
 
 import SelectTime from ".";
 
@@ -9,7 +9,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
   const mockedOnConfirmSelectTime = jest.fn();
   const mockedOnSendError = jest.fn();
   const mockedOnClearMessages = jest.fn();
-  const fakeUnavailableTimeSlots: Array<HoursT> = ["00:00", "02:00"];
+  const fakeUnavailableTimeSlots: Array<HourT> = ["00:00", "02:00"];
   let utils: HTMLElement;
   let renderAgain: (ui: React.ReactElement) => void;
 
