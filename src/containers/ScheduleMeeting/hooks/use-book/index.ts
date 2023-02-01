@@ -3,6 +3,8 @@ import axios from "../../../../axios";
 import { MentorScheduleAttributesI, MentorScheduleCollectionI, MentorScheduleResponsePayloadI, ScheduleMeetingPayloadI, UseBookReturnPayloadI } from "../../interfaces";
 import { HourT } from "../../types";
 
+const GET_MENTOR_AGENDA_URL = 'mentors/1/agenda'
+
 const useBook = (): UseBookReturnPayloadI => {
   const [error, setError] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
@@ -11,7 +13,7 @@ const useBook = (): UseBookReturnPayloadI => {
   const [selectedDateSchedule, setSelectedDateSchedule] = useState<MentorScheduleAttributesI>({ date: '', timeCollection: [] });
 
   const fetchMentorSchedule = async () => {
-    const response = await axios.get('mentors/1/agenda')
+    const response = await axios.get(GET_MENTOR_AGENDA_URL)
     return response.data
   }
 
@@ -51,7 +53,6 @@ const useBook = (): UseBookReturnPayloadI => {
   }
 
   const onSelectDate = async (date: string) => {
-    console.log(date)
     setIsLoading(true)
     if (date !== selectedDateSchedule.date) {
       // only make call and call the expensive functions above ones
@@ -65,8 +66,7 @@ const useBook = (): UseBookReturnPayloadI => {
           mentorsTotalSchedule.current.schedule = { ...packagedData.schedule }
           onSelectDate(date)
         } catch (e) {
-          // Overwrite error
-          console.log(e)
+          // Overwrite error - could send error to a logger
           setError('Something went wrong')
           setIsLoading(false)
         }

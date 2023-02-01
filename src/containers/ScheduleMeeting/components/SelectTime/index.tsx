@@ -1,7 +1,8 @@
-import { Box, Button, ListItem, Stack, UnorderedList } from "@chakra-ui/react";
+import { Box, Button, ListItem, UnorderedList } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
 import { BookCallPropsI } from "../../interfaces";
+import { ctaStyles, timeSlotsStyles, timeSlotStyles } from "./styles";
 
 import generate24HourTimeString from "./utils/generate-24-hour-time-string";
 
@@ -47,6 +48,7 @@ const SelectTime = (props: BookCallPropsI) => {
     () =>
       dailyTimeSlot.map((timeSlot) => (
         <ListItem
+          sx={timeSlotStyles}
           role={"option"}
           aria-label="select time slot"
           key={timeSlot}
@@ -66,8 +68,10 @@ const SelectTime = (props: BookCallPropsI) => {
 
   return (
     <Box>
-      <UnorderedList>{dailyTimeSlotElements}</UnorderedList>
-      <Stack direction="row" spacing={4}>
+      <UnorderedList sx={timeSlotsStyles}>
+        {dailyTimeSlotElements}
+      </UnorderedList>
+      <Box sx={ctaStyles}>
         <Button
           variant="outline"
           colorScheme="teal"
@@ -89,7 +93,7 @@ const SelectTime = (props: BookCallPropsI) => {
         >
           Select time slot
         </Button>
-      </Stack>
+      </Box>
     </Box>
   );
 };

@@ -6,6 +6,7 @@ import {
   Box,
   CloseButton,
   Flex,
+  Heading,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -16,6 +17,14 @@ import SelectTime from "./components/SelectTime";
 import ConfirmMeeting from "./components/ConfirmMeeting";
 import { SelectTimePayloadI } from "./interfaces";
 import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
+import {
+  alertMessageCloseButtonStyles,
+  alertMessageStyles,
+  errorWrapperStyles,
+  headingStyles,
+  scheduleMeetingWrapperStyles,
+  slotSelectorsStyles,
+} from "./styles";
 
 const ScheduleMeeting = () => {
   const {
@@ -70,15 +79,13 @@ const ScheduleMeeting = () => {
   };
 
   return (
-    <Box paddingTop={"20px"}>
+    <Box sx={scheduleMeetingWrapperStyles}>
       {hasMessage && (
-        <Flex justifyContent={"center"} marginBottom={"20px"}>
+        <Flex sx={errorWrapperStyles}>
           <Alert
+            sx={alertMessageStyles}
             status={!!error ? "error" : "success"}
             borderRadius={"4px"}
-            width="50%"
-            flexDirection="row"
-            justifyContent="space-between"
             role={!!error ? "error" : "success"}
           >
             <Flex flexDirection="row">
@@ -91,17 +98,15 @@ const ScheduleMeeting = () => {
               </Box>
             </Flex>
             <CloseButton
-              alignSelf="flex-start"
-              position="relative"
-              right={-1}
-              top={-1}
+              sx={alertMessageCloseButtonStyles}
               onClick={onClearMessage}
             />
           </Alert>
         </Flex>
       )}
 
-      <Box>
+      <Heading sx={headingStyles}>Book a date and time slot</Heading>
+      <Flex sx={slotSelectorsStyles}>
         <SelectDate
           onSelectDate={onSelectDateHandler}
           onClearMessages={onClearMessage}
@@ -113,7 +118,7 @@ const ScheduleMeeting = () => {
           onSendError={onSetError}
           onClearMessages={onClearMessage}
         />
-      </Box>
+      </Flex>
 
       <ConfirmMeeting
         isOpen={activeConfirmMeetingModal}
