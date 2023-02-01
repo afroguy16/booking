@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import ScheduleMeet from ".";
@@ -10,19 +10,19 @@ import { HoursT } from "./types";
 
 jest.mock("./hooks/use-book");
 
-describe("ScheduleMeet", () => {
-  const returnedData: UseBookReturnPayloadI = {
-    bookedTimeSlots: [],
-    error: "",
-    isSuccessful: false,
-    isLoading: false,
-    onSelectDate: jest.fn(),
-    onSetError: jest.fn(),
-    onClearError: jest.fn(),
-    onClearSuccess: jest.fn(),
-    onSetBooking: jest.fn(),
-  };
+const returnedData: UseBookReturnPayloadI = {
+  bookedTimeSlots: [],
+  error: "",
+  isSuccessful: false,
+  isLoading: false,
+  onSelectDate: jest.fn(),
+  onSetError: jest.fn(),
+  onClearError: jest.fn(),
+  onClearSuccess: jest.fn(),
+  onSetBooking: jest.fn(),
+};
 
+describe("ScheduleMeet Container", () => {
   afterEach(jest.resetAllMocks);
 
   it("should display the error message if there is an error", () => {
@@ -137,8 +137,6 @@ describe("ScheduleMeet", () => {
     expect(loadingText).not.toBeInTheDocument();
   });
 
-  it("should call onSelectDate when a date is selected from SelectDate", () => {});
-
   it("should call onSetError when an error is sent from BookCall", async () => {
     const { onSetError } = returnedData;
     const fakeReasonForCall = "Just some random reason for the call";
@@ -173,18 +171,54 @@ describe("ScheduleMeet", () => {
       message: ERROR_TIME_SLOT_UNAVAILABLE,
     });
   });
-
-  it("should package the payload and call onSetBooking with the payload payLoad once a Booking date is confirmed", () => {});
 });
 
-// error - should display error if there is an error
-// selectedDate - should display (child) with selected date time
-// Success - should show success message
-// loading - should display (child) loading when loading
+describe("ScheduleMeet Container - with Fake Timer", () => {
+  afterEach(jest.resetAllMocks);
 
-// onClearSuccess - should call onClear Success reset success message once timeslot or date is clicked - //TODO, replace onClearError with onClick/onFire
-// onClearError() - refer to onClearSuccess TODO
+  afterAll(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
 
-// onSelectDate(date) - should call onSelectDate onSelectDate from SelectDate
-// onSetError(error) - should call onSetError onSetError from BookCall
-// onSetBooking(booking) - should call onSetBooking with payLoad that includes selectedDate {date: day, time: time, reasonforcall: string}
+  it("should call onSelectDate when a date is selected from SelectDate", () => {
+    const fakeToday = "01.01.2023";
+    const { onSelectDate } = returnedData;
+    jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
+    jest.mocked(useBook).mockReturnValue({ ...returnedData });
+    render(<ScheduleMeet />);
+
+    expect(onSelectDate).toHaveBeenNthCalledWith(1, fakeToday);
+  });
+
+  it("should package the payload and call onSetBooking with the payload payLoad once a Booking is confirmed", () => {
+    const fakeToday = "01.01.2023";
+    const fakeReasonForCall = "Just some random reason for the call";
+    const { onSetBooking } = returnedData;
+
+    jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
+    jest.mocked(useBook).mockReturnValue({ ...returnedData });
+    render(<ScheduleMeet />);
+
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", {
+        name: /select time slot/i,
+      })
+      .at(4)!; // "04:00"
+    fireEvent.click(randomAvailableTimeSlot);
+
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    fireEvent.click(selectButtonElement);
+
+    const inputFieldElement = screen.getByRole("textbox");
+    const bookCallButtonElement = screen.getByText(/book call/i);
+    fireEvent.change(inputFieldElement, {
+      target: { value: fakeReasonForCall },
+    });
+    fireEvent.click(bookCallButtonElement);
+    expect(onSetBooking).toHaveBeenCalledWith({
+      date: "01.01.2023:04:00",
+      reason: fakeReasonForCall,
+    });
+  });
+});

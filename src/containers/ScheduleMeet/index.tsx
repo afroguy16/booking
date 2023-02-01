@@ -11,6 +11,8 @@ import useBook from "./hooks/use-book";
 import BookCall from "./components/BookCall";
 import SelectDate from "./components/SelectDate";
 import { SUCCESS_MESSAGE } from "./constants";
+import { BookCallPayloadI } from "./interfaces";
+import { useState } from "react";
 
 const ScheduleMeet = () => {
   const {
@@ -22,16 +24,30 @@ const ScheduleMeet = () => {
     onSetError,
     onClearError,
     onClearSuccess,
-    // onSetBooking,
+    onSetBooking,
   } = useBook();
 
   const hasMessage = !!error || isSuccessful;
+  const [selectedDate, setSelectedDate] = useState("");
 
   const onClearMessage = () => {
     if (error) {
       return onClearError();
     }
     onClearSuccess();
+  };
+
+  const onSelectDateHandler = (date: string) => {
+    setSelectedDate(date);
+    onSelectDate(date);
+  };
+
+  const onSetBookingHandler = (payload: BookCallPayloadI) => {
+    console.log(`${selectedDate}:${payload.time}`);
+    onSetBooking({
+      date: `${selectedDate}:${payload.time}`,
+      reason: payload.reason,
+    });
   };
 
   return (
@@ -65,12 +81,16 @@ const ScheduleMeet = () => {
           </Alert>
         </Flex>
       )}
+
       <Box>
-        <SelectDate onSelectDate={onSelectDate} onClearMessages={() => {}} />
+        <SelectDate
+          onSelectDate={onSelectDateHandler}
+          onClearMessages={() => {}}
+        />
         <BookCall
           isLoading={isLoading}
           unavailableTimeSlots={bookedTimeSlots}
-          onBookCall={() => {}}
+          onBookCall={onSetBookingHandler}
           onSendError={onSetError}
           onClearMessages={() => {}}
         />

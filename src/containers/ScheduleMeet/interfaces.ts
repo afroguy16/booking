@@ -10,6 +10,11 @@ export interface BookCallPayloadI {
   reason: string;
 }
 
+export interface ScheduleMeetPayloadI {
+  date: string;
+  reason: string;
+}
+
 export interface BookCallErrorI {
   message: string
 }
@@ -27,9 +32,9 @@ export interface UseBookReturnPayloadI {
   error: string;
   isSuccessful: boolean;
   isLoading: boolean;
-  onSelectDate: () => void;
-  onSetError: () => void;
+  onSelectDate: (date: string) => void;
+  onSetError: (payload: BookCallErrorI) => void;
   onClearError: () => void;
   onClearSuccess: () => void;
-  onSetBooking: () => void;
+  onSetBooking: (payload: ScheduleMeetPayloadI) => void; //Fix naming ScheduleMeet and BookCall
 }

@@ -49,7 +49,7 @@ const BookCall = (props: BookCallPropsI) => {
     return timeSlots;
   }, []);
 
-  // Create an hash from the unavailable time slot so that search can be (O)1
+  // Create an hash from the unavailable time slot so that the search can be (O)1
   const hashedUnavailableTimeSlots = useMemo(() => {
     const hash: { [key: string]: string } = {};
     unavailableTimeSlots.forEach((timeSlot) => {
