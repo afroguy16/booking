@@ -1,5 +1,5 @@
 export const SUCCESS_MESSAGE = "Time slot was booked successfully";
-export const TWENTY_FOUR_HOUR_STRING = <const>[
+export const TWENTY_FOUR_HOUR_STRING = [
   "00:00",
   "01:00",
   "02:00",
@@ -24,4 +24,4 @@ export const TWENTY_FOUR_HOUR_STRING = <const>[
   "21:00",
   "22:00",
   "23:00"
-]
+] as const

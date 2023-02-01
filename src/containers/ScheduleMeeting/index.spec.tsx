@@ -77,7 +77,7 @@ describe("ScheduleMeeting Container", () => {
     expect(onClearSuccess).not.toHaveBeenCalled();
   });
 
-  it("should call onClearError if onClearMesage is called from child (Book Call) and there is error message", async () => {
+  it("should call onClearError if onClearMesage is called from child (Confirm meeting) and there is error message", async () => {
     const error = "fake error";
     const user = userEvent.setup();
     const { onClearError, onClearSuccess } = returnedData;
@@ -161,7 +161,7 @@ describe("ScheduleMeeting Container", () => {
     expect(optionElements).toHaveLength(3);
   });
 
-  it("should display loading if loading is received from the store", async () => {
+  it("should display confirming if confirming is received from the store", async () => {
     const user = userEvent.setup();
     jest.mocked(useBook).mockReturnValue({ ...returnedData, isLoading: true });
     render(<ScheduleMeeting />);
@@ -176,11 +176,11 @@ describe("ScheduleMeeting Container", () => {
     const selectButtonElement = screen.getByText(/select time slot/i);
     await user.click(selectButtonElement);
 
-    const loadingText = screen.getByText("loading");
+    const loadingText = screen.getByText(/confirming/i);
     expect(loadingText).toBeInTheDocument();
   });
 
-  it("should not display loading if loading isn't received from the store", async () => {
+  it("should not display confirming if confirming isn't received from the store", async () => {
     const user = userEvent.setup();
     jest.mocked(useBook).mockReturnValue({ ...returnedData });
     render(<ScheduleMeeting />);
@@ -195,10 +195,11 @@ describe("ScheduleMeeting Container", () => {
     const selectButtonElement = screen.getByText(/select time slot/i);
     await user.click(selectButtonElement);
 
-    const loadingText = screen.queryByText("loading");
+    const loadingText = screen.queryByText("confirming");
     expect(loadingText).not.toBeInTheDocument();
   });
 
+  // TODO - A better UX would be to disable the slots, so they aren't clickable
   it("should call onSetError if the requested time slot isn't available", async () => {
     const { onSetError } = returnedData;
     const fakeReasonForCall = "Just some random reason for the call";
@@ -226,7 +227,7 @@ describe("ScheduleMeeting Container", () => {
     await user.click(selectButtonElement);
 
     const inputFieldElement = screen.getByRole("textbox");
-    const bookCallButtonElement = screen.getByText(/book call/i);
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
     await user.type(inputFieldElement, fakeReasonForCall);
     await user.click(bookCallButtonElement);
     expect(onSetError).toHaveBeenCalledWith({
@@ -274,7 +275,7 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
     fireEvent.click(selectButtonElement);
 
     const inputFieldElement = screen.getByRole("textbox");
-    const bookCallButtonElement = screen.getByText(/book call/i);
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
     fireEvent.change(inputFieldElement, {
       target: { value: fakeReasonForCall },
     });

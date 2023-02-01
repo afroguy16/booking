@@ -20,7 +20,7 @@ const ConfirmMeeting = ({
   isOpen,
   isLoading,
   onClose,
-  onConfirmBooking,
+  onConfirmMeeting,
 }: ConfirmMeetingPropsI) => {
   const [callReason, setCallReason] = useState("");
   const isValidReason = callReason.length >= MINIMUM_REASON_CHAR_LENGTH;
@@ -55,10 +55,11 @@ const ConfirmMeeting = ({
             colorScheme="blue"
             mr={3}
             isLoading={isLoading}
-            onClick={() => onConfirmBooking(callReason)}
+            loadingText="Confirming"
+            onClick={() => onConfirmMeeting(callReason)}
             isDisabled={!isValidReason}
           >
-            {isLoading ? "loading" : "Book call"}
+            Confirm meeting
           </Button>
         </ModalFooter>
       </ModalContent>

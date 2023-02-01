@@ -46,6 +46,7 @@ const ScheduleMeeting = () => {
   };
 
   const onConfirmBookingHandler = (reason: string) => {
+    // TODO - A better UX would be to disable the slots, so they aren't clickable
     if (!selectedTimeSlot.availability) {
       return onSetError({
         path: "ConfirmMeeting",
@@ -116,7 +117,7 @@ const ScheduleMeeting = () => {
         isOpen={activeConfirmMeetingModal}
         isLoading={isLoading}
         onClose={() => setActiveConfirmMeeting(false)}
-        onConfirmBooking={onConfirmBookingHandler}
+        onConfirmMeeting={onConfirmBookingHandler}
       />
     </Box>
   );

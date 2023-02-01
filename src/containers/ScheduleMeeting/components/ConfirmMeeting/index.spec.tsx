@@ -1,84 +1,76 @@
+import {
+  getByText,
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import ConfirmMeeting from ".";
+
 describe("", () => {
-  // it("the button should be disabled until the user types a valid reason once the call reason prompt is displayed", async () => {
-  //   const user = userEvent.setup();
-  //   const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-  //   await user.click(randomAvailableTimeSlot);
-  //   const selectButtonElement = screen.getByText(/select time slot/i);
-  //   await user.click(selectButtonElement);
-  //   const bookCallButtonElement = screen.getByText(/book call/i);
-  //   expect(bookCallButtonElement).toBeDisabled();
-  // });
-  // it("should remove the prompt if the prompt is cancelled once the 'call reason prompt' is displayed", async () => {
-  //   const user = userEvent.setup();
-  //   const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-  //   await user.click(randomAvailableTimeSlot);
-  //   const selectButtonElement = screen.getByText(/select time slot/i);
-  //   await user.click(selectButtonElement);
-  //   const cancelCallButtonElement = screen.getByText(/cancel/i);
-  //   await user.click(cancelCallButtonElement);
-  //   const inputFieldElement = screen.getByRole("textbox");
-  //   await waitForElementToBeRemoved(inputFieldElement);
-  //   expect(inputFieldElement).not.toBeInTheDocument();
-  // });
-  // it("should should loading if it is loading", async () => {
-  //   const user = userEvent.setup();
-  //   renderAgain(
-  //     <SelectTime
-  //       isLoading={true}
-  //       unavailableTimeSlots={fakeUnavailableTimeSlots}
-  //       onBookCall={mockedOnBookCall}
-  //       onSendError={mockedOnSendError}
-  //       onClearMessages={mockedOnClearMessages}
-  //     />
-  //   );
-  //   const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-  //   await user.click(randomAvailableTimeSlot);
-  //   const selectButtonElement = screen.getByText(/select time slot/i);
-  //   await user.click(selectButtonElement);
-  //   const loadingText = screen.getByText("loading");
-  //   expect(loadingText).toBeInTheDocument();
-  //   jest.resetAllMocks();
-  // });
-  // // TODO - A better UX would be to disable the slots, so they aren't clickable
-  // it("should send an error if date that has already been taken is selected", async () => {
-  //   const fakeReasonForCall = "Just some random reason for the call";
-  //   const user = userEvent.setup();
-  //   const randomAvailableTimeSlot = screen.getAllByRole("option").at(2)!; // "02:00" - from the "fakeUnavailableTimeSlots" variable, we can see that "02:00" is already taken.
-  //   await user.click(randomAvailableTimeSlot);
-  //   const selectButtonElement = screen.getByText(/select time slot/i);
-  //   await user.click(selectButtonElement);
-  //   const inputFieldElement = screen.getByRole("textbox");
-  //   const bookCallButtonElement = screen.getByText(/book call/i);
-  //   expect(bookCallButtonElement).toBeDisabled();
-  //   await user.type(inputFieldElement, fakeReasonForCall);
-  //   expect(bookCallButtonElement).toBeEnabled();
-  //   await user.click(bookCallButtonElement);
-  //   expect(mockedOnSendError).toHaveBeenCalledWith({
-  //     message: ERROR_TIME_SLOT_UNAVAILABLE,
-  //   });
-  //   jest.resetAllMocks();
-  // });
-  // it("should send a payload with the reason for the call and date once the call booking is initiated", async () => {
-  //   const fakeReasonForCall = "Just some random reason for the call";
-  //   const user = userEvent.setup();
-  //   const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
-  //   await user.click(randomAvailableTimeSlot);
-  //   const selectButtonElement = screen.getByText(/select time slot/i);
-  //   await user.click(selectButtonElement);
-  //   const inputFieldElement = screen.getByRole("textbox");
-  //   const bookCallButtonElement = screen.getByText(/book call/i);
-  //   expect(bookCallButtonElement).toBeDisabled();
-  //   await user.type(inputFieldElement, fakeReasonForCall);
-  //   expect(bookCallButtonElement).toBeEnabled();
-  //   await user.click(bookCallButtonElement);
-  //   expect(mockedOnBookCall).toHaveBeenCalledWith({
-  //     time: "03:00",
-  //     reason: fakeReasonForCall,
-  //   });
-  //   jest.resetAllMocks();
-  // });
+  const mockedOnClose = jest.fn();
+  const mockedOnConfirmMeeting = jest.fn();
+  const props = {
+    isLoading: false,
+    isOpen: true,
+    onClose: mockedOnClose,
+    onConfirmMeeting: mockedOnConfirmMeeting,
+  };
 
-  it("", () => {});
+  afterEach(jest.resetAllMocks);
+
+  it("shouldn't render if isOpen is false", () => {
+    const localProps = { ...props, isOpen: false };
+    render(<ConfirmMeeting {...localProps} />);
+
+    const titleElement = screen.queryByText(/reason for call/i);
+    expect(titleElement).not.toBeInTheDocument();
+  });
+
+  it("should render if isOpen is true", () => {
+    render(<ConfirmMeeting {...props} />);
+
+    const titleElement = screen.getByText(/Reason for call/i);
+    expect(titleElement).toBeInTheDocument();
+  });
+
+  it("should not show confirming if it is not confirming", () => {
+    render(<ConfirmMeeting {...props} />);
+
+    const loadingText = screen.queryByText("confirming");
+    expect(loadingText).not.toBeInTheDocument();
+  });
+
+  it("should show confirming if it is confirming", () => {
+    const localProps = { ...props, isLoading: true };
+    render(<ConfirmMeeting {...localProps} />);
+
+    const loadingText = screen.getByText(/confirming/i);
+    expect(loadingText).toBeInTheDocument();
+  });
+
+  it("the button should be disabled until the user types a valid reason", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
+    render(<ConfirmMeeting {...props} />);
+
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    expect(bookCallButtonElement).toBeDisabled();
+
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+    expect(bookCallButtonElement).toBeEnabled();
+  });
+
+  it("should call onConfirmMeeting if the 'confirm meeting' button is clicked", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
+    render(<ConfirmMeeting {...props} />);
+
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+    await user.click(bookCallButtonElement);
+    expect(mockedOnConfirmMeeting).toHaveBeenLastCalledWith(fakeReasonForCall);
+  });
 });
-
-export {};

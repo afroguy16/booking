@@ -45,5 +45,5 @@ export interface ConfirmMeetingPropsI {
   isOpen: boolean
   isLoading: boolean
   onClose: () => void
-  onConfirmBooking: (reason: string) => void
+  onConfirmMeeting: (reason: string) => void
 }
