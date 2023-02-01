@@ -199,7 +199,7 @@ describe("ScheduleMeeting Container", () => {
     expect(loadingText).not.toBeInTheDocument();
   });
 
-  it("should call onSetError when an error is sent from SelectTime", async () => {
+  it("should call onSetError if the requested time slot isn't available", async () => {
     const { onSetError } = returnedData;
     const fakeReasonForCall = "Just some random reason for the call";
     const fakeBookedTimeSlot: Array<HoursT> = [
@@ -230,6 +230,7 @@ describe("ScheduleMeeting Container", () => {
     await user.type(inputFieldElement, fakeReasonForCall);
     await user.click(bookCallButtonElement);
     expect(onSetError).toHaveBeenCalledWith({
+      path: "ConfirmMeeting",
       message: ERROR_TIME_SLOT_UNAVAILABLE,
     });
   });
@@ -279,7 +280,8 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
     });
     fireEvent.click(bookCallButtonElement);
     expect(onSetBooking).toHaveBeenCalledWith({
-      date: "01.01.2023:04:00",
+      time: "04:00",
+      date: "01.01.2023",
       reason: fakeReasonForCall,
     });
   });

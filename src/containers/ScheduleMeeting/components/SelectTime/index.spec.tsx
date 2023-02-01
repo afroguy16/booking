@@ -70,13 +70,29 @@ describe("ScheduleMeeting Component - SelectDate", () => {
     jest.resetAllMocks();
   });
 
-  it("should send onConfirm time with the time as payload if the 'confirm time slot' button is clicked", async () => {
+  it("should send onConfirm time with the time and availability = true as payload if the 'confirm time slot' button is clicked and the time is available", async () => {
     const user = userEvent.setup();
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
     await user.click(randomAvailableTimeSlot);
 
     const selectButtonElement = screen.getByText(/select time slot/i);
     await user.click(selectButtonElement);
-    expect(mockedOnConfirmSelectTime).toHaveBeenCalledWith("03:00");
+    expect(mockedOnConfirmSelectTime).toHaveBeenCalledWith({
+      time: "03:00",
+      availability: true,
+    });
+  });
+
+  it("should send onConfirm time with the time and availability = false as payload if the 'confirm time slot' button is clicked and the time is not available", async () => {
+    const user = userEvent.setup();
+    const randomAvailableTimeSlot = screen.getAllByRole("option").at(2)!; // "02:00"
+    await user.click(randomAvailableTimeSlot);
+
+    const selectButtonElement = screen.getByText(/select time slot/i);
+    await user.click(selectButtonElement);
+    expect(mockedOnConfirmSelectTime).toHaveBeenCalledWith({
+      time: "02:00",
+      availability: false,
+    });
   });
 });

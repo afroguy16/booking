@@ -78,7 +78,12 @@ const SelectTime = (props: BookCallPropsI) => {
           variant="solid"
           colorScheme="teal"
           isDisabled={!isTimeSlotSelected}
-          onClick={() => onSelectTimeSlot(selectedTimeSlot)}
+          onClick={() =>
+            onSelectTimeSlot({
+              time: selectedTimeSlot,
+              availability: !isTimeTaken(selectedTimeSlot),
+            })
+          }
         >
           Select time slot
         </Button>

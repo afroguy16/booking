@@ -17,19 +17,16 @@ import { ConfirmMeetingPropsI } from "../../interfaces";
 import { MINIMUM_REASON_CHAR_LENGTH } from "../SelectTime/constants";
 
 const ConfirmMeeting = ({
+  isOpen,
   isLoading,
+  onClose,
   onConfirmBooking,
 }: ConfirmMeetingPropsI) => {
-  const [selectedTimeSlotActivated, setSelectedTimeSlotActivated] =
-    useState(false);
   const [callReason, setCallReason] = useState("");
   const isValidReason = callReason.length >= MINIMUM_REASON_CHAR_LENGTH;
 
   return (
-    <Modal
-      isOpen={selectedTimeSlotActivated}
-      onClose={() => setSelectedTimeSlotActivated(false)}
-    >
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Reason for call</ModalHeader>
@@ -51,11 +48,7 @@ const ConfirmMeeting = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            variant="outline"
-            marginRight={"16px"}
-            onClick={() => setSelectedTimeSlotActivated(false)}
-          >
+          <Button variant="outline" marginRight={"16px"} onClick={onClose}>
             Cancel
           </Button>
           <Button

@@ -10,11 +10,12 @@ import {
 import { useState } from "react";
 
 import { SUCCESS_MESSAGE } from "./constants";
-import { SelectTimePayloadI } from "./interfaces";
 import useBook from "./hooks/use-book";
 import SelectDate from "./components/SelectDate";
 import SelectTime from "./components/SelectTime";
 import ConfirmMeeting from "./components/ConfirmMeeting";
+import { SelectTimePayloadI } from "./interfaces";
+import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 
 const ScheduleMeeting = () => {
   const {
@@ -31,6 +32,11 @@ const ScheduleMeeting = () => {
 
   const hasMessage = !!error || isSuccessful;
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<SelectTimePayloadI>({
+    time: "",
+    availability: false,
+  });
+  const [activeConfirmMeetingModal, setActiveConfirmMeeting] = useState(false);
 
   const onClearMessage = () => {
     if (error) {
@@ -39,28 +45,25 @@ const ScheduleMeeting = () => {
     onClearSuccess();
   };
 
-  // const onBookCallHandler = () => {
-  //   // if (isTimeTaken) {
-  //   //   return onSendError({
-  //   //     path: "ConfirmMeeting",
-  //   //     message: ERROR_TIME_SLOT_UNAVAILABLE,
-  //   //   });
-  //   // }
-  //   onConfirmBooking(callReason);
-  //   // setSelectedTimeSlotActivated(false);
-  // };
+  const onConfirmBookingHandler = (reason: string) => {
+    if (!selectedTimeSlot.availability) {
+      return onSetError({
+        path: "ConfirmMeeting",
+        message: ERROR_TIME_SLOT_UNAVAILABLE,
+      });
+    }
+    onSetBooking({ date: selectedDate, time: selectedTimeSlot.time, reason });
+    setActiveConfirmMeeting(false);
+  };
 
   const onSelectDateHandler = (date: string) => {
     setSelectedDate(date);
     onSelectDate(date);
   };
 
-  const onSetBookingHandler = (payload: SelectTimePayloadI) => {
-    console.log(`${selectedDate}:${payload.time}`);
-    onSetBooking({
-      date: `${selectedDate}:${payload.time}`,
-      reason: payload.reason,
-    });
+  const onSelectTimeSlotHandler = (payload: SelectTimePayloadI) => {
+    setSelectedTimeSlot(payload);
+    setActiveConfirmMeeting(true);
   };
 
   return (
@@ -103,14 +106,18 @@ const ScheduleMeeting = () => {
         <SelectTime
           isLoading={isLoading}
           unavailableTimeSlots={bookedTimeSlots}
-          // onBookCall={onSetBookingHandler}
-          onSelectTimeSlot={() => {}} //TODO - fix
+          onSelectTimeSlot={onSelectTimeSlotHandler}
           onSendError={onSetError}
           onClearMessages={onClearMessage}
         />
       </Box>
 
-      <ConfirmMeeting isLoading={isLoading} onConfirmBooking={() => {}} />
+      <ConfirmMeeting
+        isOpen={activeConfirmMeetingModal}
+        isLoading={isLoading}
+        onClose={() => setActiveConfirmMeeting(false)}
+        onConfirmBooking={onConfirmBookingHandler}
+      />
     </Box>
   );
 };
