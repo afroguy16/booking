@@ -1,5 +1,5 @@
-import ScheduleMeet from "../../containers/ScheduleMeet";
+import ScheduleMeeting from "../../containers/ScheduleMeeting";
 
-const Home = () => <ScheduleMeet />;
+const Home = () => <ScheduleMeeting />;
 
 export default Home;

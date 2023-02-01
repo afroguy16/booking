@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import ScheduleMeet from ".";
+import ScheduleMeeting from ".";
 import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 import { SUCCESS_MESSAGE } from "./constants";
 import useBook from "./hooks/use-book";
@@ -22,14 +22,14 @@ const returnedData: UseBookReturnPayloadI = {
   onSetBooking: jest.fn(),
 };
 
-describe("ScheduleMeet Container", () => {
+describe("ScheduleMeeting Container", () => {
   afterEach(jest.resetAllMocks);
 
   it("should display the error message if there is an error", () => {
     const error = "fake error";
     jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
 
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const errorElement = screen.getByRole("error");
     expect(errorElement).toHaveTextContent(error);
@@ -43,7 +43,7 @@ describe("ScheduleMeet Container", () => {
       .mocked(useBook)
       .mockReturnValue({ ...returnedData, isSuccessful: true });
 
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const errorElement = screen.queryByRole("error");
     expect(errorElement).not.toBeInTheDocument();
@@ -58,7 +58,7 @@ describe("ScheduleMeet Container", () => {
     jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
     const user = userEvent.setup();
 
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const closeButtonElement = screen.getByRole("button", { name: /close/i });
     await user.click(closeButtonElement);
@@ -71,7 +71,7 @@ describe("ScheduleMeet Container", () => {
     const { onClearError, onClearSuccess } = returnedData;
 
     jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     expect(onClearError).toHaveBeenCalledTimes(1); // called when SelectDate is mounted if there is an existing error
     expect(onClearSuccess).not.toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe("ScheduleMeet Container", () => {
     const { onClearError, onClearSuccess } = returnedData;
 
     jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
@@ -103,7 +103,7 @@ describe("ScheduleMeet Container", () => {
       .mockReturnValue({ ...returnedData, isSuccessful: true });
     const user = userEvent.setup();
 
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const closeButtonElement = screen.getByRole("button", { name: /close/i });
     await user.click(closeButtonElement);
@@ -117,7 +117,7 @@ describe("ScheduleMeet Container", () => {
     jest
       .mocked(useBook)
       .mockReturnValue({ ...returnedData, isSuccessful: true });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     expect(onClearSuccess).toHaveBeenCalledTimes(1); // called when SelectDate is mounted if there is an existing error
     expect(onClearError).not.toHaveBeenCalled();
@@ -130,7 +130,7 @@ describe("ScheduleMeet Container", () => {
     jest
       .mocked(useBook)
       .mockReturnValue({ ...returnedData, isSuccessful: true });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
@@ -155,7 +155,7 @@ describe("ScheduleMeet Container", () => {
       bookedTimeSlots: fakeBookedTimeSlot,
     });
 
-    const { baseElement } = render(<ScheduleMeet />);
+    const { baseElement } = render(<ScheduleMeeting />);
 
     const optionElements = baseElement.getElementsByClassName("unavailable");
     expect(optionElements).toHaveLength(3);
@@ -164,7 +164,7 @@ describe("ScheduleMeet Container", () => {
   it("should display loading if loading is received from the store", async () => {
     const user = userEvent.setup();
     jest.mocked(useBook).mockReturnValue({ ...returnedData, isLoading: true });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
@@ -183,7 +183,7 @@ describe("ScheduleMeet Container", () => {
   it("should not display loading if loading isn't received from the store", async () => {
     const user = userEvent.setup();
     jest.mocked(useBook).mockReturnValue({ ...returnedData });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
@@ -213,7 +213,7 @@ describe("ScheduleMeet Container", () => {
       ...returnedData,
       bookedTimeSlots: fakeBookedTimeSlot,
     });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
@@ -235,7 +235,7 @@ describe("ScheduleMeet Container", () => {
   });
 });
 
-describe("ScheduleMeet Container - with Fake Timer", () => {
+describe("ScheduleMeeting Container - with Fake Timer", () => {
   afterEach(jest.resetAllMocks);
 
   afterAll(() => {
@@ -248,7 +248,7 @@ describe("ScheduleMeet Container - with Fake Timer", () => {
     const { onSelectDate } = returnedData;
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
     jest.mocked(useBook).mockReturnValue({ ...returnedData });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     expect(onSelectDate).toHaveBeenNthCalledWith(1, fakeToday);
   });
@@ -260,7 +260,7 @@ describe("ScheduleMeet Container - with Fake Timer", () => {
 
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
     jest.mocked(useBook).mockReturnValue({ ...returnedData });
-    render(<ScheduleMeet />);
+    render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {

@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 import SelectDate from ".";
 
-describe("ScheduleMeet Component - SelectDate", () => {
+describe("ScheduleMeeting Component - SelectDate", () => {
   afterAll(() => {
     jest.runOnlyPendingTimers();
     jest.useRealTimers();

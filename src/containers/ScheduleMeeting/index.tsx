@@ -9,13 +9,13 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 
-import useBook from "./hooks/use-book";
-import SelectTime from "./components/SelectTime";
-import SelectDate from "./components/SelectDate";
 import { SUCCESS_MESSAGE } from "./constants";
 import { SelectTimePayloadI } from "./interfaces";
+import useBook from "./hooks/use-book";
+import SelectDate from "./components/SelectDate";
+import SelectTime from "./components/SelectTime";
 
-const ScheduleMeet = () => {
+const ScheduleMeeting = () => {
   const {
     bookedTimeSlots,
     error,
@@ -100,4 +100,4 @@ const ScheduleMeet = () => {
   );
 };
 
-export default ScheduleMeet;
+export default ScheduleMeeting;

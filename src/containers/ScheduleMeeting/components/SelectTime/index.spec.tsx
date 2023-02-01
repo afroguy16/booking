@@ -10,7 +10,7 @@ import { HoursT } from "../../types";
 import SelectTime from ".";
 import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 
-describe("ScheduleMeet Component - SelectDate", () => {
+describe("ScheduleMeeting Component - SelectDate", () => {
   const mockedOnBookCall = jest.fn();
   const mockedOnSendError = jest.fn();
   const mockedOnClearMessages = jest.fn();
