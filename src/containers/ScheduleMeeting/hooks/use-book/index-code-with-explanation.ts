@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MentorScheduleAttributesI, MentorScheduleCollectionI, MentorScheduleResponsePayloadI, ScheduleMeetingPayloadI, UseBookReturnPayloadI } from "../../interfaces";
 import { HourT } from "../../types";
 
@@ -6,7 +6,7 @@ const useBook = (): UseBookReturnPayloadI => {
   const [error, setError] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [mentorsTotalSchedule, setMentorsTotalSchedule] = useState<MentorScheduleCollectionI>({ mentor: { name: '', time_zone: '' }, schedule: [] })
+  let mentorsTotalSchedule = useRef({ mentor: { name: '', time_zone: '' }, schedule: {} })
   const [selectedDateSchedule, setSelectedDateSchedule] = useState<MentorScheduleAttributesI>({ date: '', timeCollection: [] });
 
   // sample data from API
@@ -443,7 +443,7 @@ const useBook = (): UseBookReturnPayloadI => {
   //       },
   //   ]
   // }
-  const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): Array<MentorScheduleAttributesI> => {
+  const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): any => {
     let splitCalendar: Array<Array<string>> = []
 
     // initial data transformation to
@@ -483,22 +483,23 @@ const useBook = (): UseBookReturnPayloadI => {
         }
       })
     }
+    return hash
 
-    // packagedData
-    // {
-    //   {date: "2023-01-23": schedule: ["13:00:00", "14:00:00"]},
-    //   {date: "2023-01-27": schedule: ["09:00:00]}
+    // // packagedData
+    // // {
+    // //   {date: "2023-01-23": schedule: ["13:00:00", "14:00:00"]},
+    // //   {date: "2023-01-27": schedule: ["09:00:00]}
+    // // }
+    // const packagedData: Array<{ date: string, timeCollection: Array<HourT> }> = []
+
+    // for (const [key, value] of Object.entries(hash)) {
+    //   packagedData.push({ date: key, timeCollection: <Array<HourT>>value })
     // }
-    const packagedData: Array<{ date: string, timeCollection: Array<HourT> }> = []
 
-    for (const [key, value] of Object.entries(hash)) {
-      packagedData.push({ date: key, timeCollection: <Array<HourT>>value })
-    }
-
-    return packagedData;
+    // return packagedData;
   }
 
-  const getPackagedMentorTotalSchedule = (rawMentorSchedule: MentorScheduleResponsePayloadI): MentorScheduleCollectionI => { // change return type to MentorScheduleCollectionI
+  const getPackagedMentorTotalSchedule = (rawMentorSchedule: MentorScheduleResponsePayloadI): MentorScheduleCollectionI => {
     const schedule = getExtractedMentorSchedule(rawMentorSchedule.calendar)
     return ({
       mentor: {
@@ -511,16 +512,30 @@ const useBook = (): UseBookReturnPayloadI => {
 
   const onSelectDate = async (date: string) => {
     if (date !== selectedDateSchedule.date) {
-      if (mentorsTotalSchedule.schedule.length < 1) {
+      // only make call and call the expensive functions above ones
+      if (mentorsTotalSchedule.current.schedule = {}) {
         try {
+          console.log(mentorsTotalSchedule.current.schedule)
           const mentorSchedule = await fetchMentorSchedule()
           const packagedData = getPackagedMentorTotalSchedule(mentorSchedule)
-          console.log(packagedData)
+          mentorsTotalSchedule = {
+            ...mentorsTotalSchedule,
+            mentor: {
+              name: packagedData.mentor.name,
+              time_zone: packagedData.mentor.time_zone
+            },
+            schedule: packagedData.schedule
+          } as any
+          // mentorsTotalSchedule.current.mentor = { ...packagedData.mentor }
+          // mentorsTotalSchedule.current.schedule = [...packagedData.schedule] as any // enforce type
+          // onSelectDate(date)
         } catch (e) {
           // Overwrite error
           console.log(e)
           setError('Something went wrong')
         }
+      } else {
+        console.log(mentorsTotalSchedule.current, mentorsTotalSchedule.current.schedule)
       }
     }
   }

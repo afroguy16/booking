@@ -33,7 +33,7 @@ export interface MentorScheduleResponsePayloadI {
 
 export interface MentorScheduleCollectionI {
   mentor: MentorAttributesI,
-  schedule: Array<MentorScheduleAttributesI>
+  schedule: { [key: string]: Array<HourT> }
 }
 
 export interface UseBookReturnPayloadI {
