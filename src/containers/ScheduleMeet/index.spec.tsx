@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import ScheduleMeet from ".";
-import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/BookCall/constants";
+import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 import { SUCCESS_MESSAGE } from "./constants";
 import useBook from "./hooks/use-book";
 import { UseBookReturnPayloadI } from "./interfaces";
@@ -123,7 +123,7 @@ describe("ScheduleMeet Container", () => {
     expect(onClearError).not.toHaveBeenCalled();
   });
 
-  it("should call onClearSuccess if onClearMesage is called from child (BookCall) and there is a success message", async () => {
+  it("should call onClearSuccess if onClearMesage is called from child (SelectTime) and there is a success message", async () => {
     const user = userEvent.setup();
     const { onClearError, onClearSuccess } = returnedData;
 
@@ -143,12 +143,12 @@ describe("ScheduleMeet Container", () => {
     expect(onClearError).not.toHaveBeenCalled();
   });
 
-  it("should set the selected date and time in the BookCall child", () => {
+  it("should set the selected date and time in the SelectTime child", () => {
     const fakeBookedTimeSlot: Array<HoursT> = [
       "00:00",
       "03:00",
       "04:00",
-      "04:00", // duplicates will be filtered out by BookCall. This is an unlikely scenario because the endpoint won't send two blocked time
+      "04:00", // duplicates will be filtered out by SelectTime. This is an unlikely scenario because the endpoint won't send two blocked time
     ];
     jest.mocked(useBook).mockReturnValue({
       ...returnedData,
@@ -199,14 +199,14 @@ describe("ScheduleMeet Container", () => {
     expect(loadingText).not.toBeInTheDocument();
   });
 
-  it("should call onSetError when an error is sent from BookCall", async () => {
+  it("should call onSetError when an error is sent from SelectTime", async () => {
     const { onSetError } = returnedData;
     const fakeReasonForCall = "Just some random reason for the call";
     const fakeBookedTimeSlot: Array<HoursT> = [
       "00:00",
       "03:00",
       "04:00",
-      "04:00", // duplicates will be filtered out by BookCall. This is an unlikely scenario because the endpoint won't send two blocked time
+      "04:00", // duplicates will be filtered out by SelectTime. This is an unlikely scenario because the endpoint won't send two blocked time
     ];
     const user = userEvent.setup();
     jest.mocked(useBook).mockReturnValue({

@@ -25,7 +25,7 @@ import {
 } from "./constants";
 import generateHourString from "./utils/generate-hour-string";
 
-const BookCall = (props: BookCallPropsI) => {
+const SelectTime = (props: BookCallPropsI) => {
   const {
     isLoading,
     unavailableTimeSlots,
@@ -178,4 +178,4 @@ const BookCall = (props: BookCallPropsI) => {
   );
 };
 
-export default BookCall;
+export default SelectTime;

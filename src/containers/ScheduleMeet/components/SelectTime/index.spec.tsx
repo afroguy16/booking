@@ -7,7 +7,7 @@ import userEvent from "@testing-library/user-event";
 
 import { HoursT } from "../../types";
 
-import BookCall from ".";
+import SelectTime from ".";
 import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 
 describe("ScheduleMeet Component - SelectDate", () => {
@@ -20,7 +20,7 @@ describe("ScheduleMeet Component - SelectDate", () => {
 
   beforeEach(() => {
     const { baseElement, rerender } = render(
-      <BookCall
+      <SelectTime
         isLoading={false}
         unavailableTimeSlots={fakeUnavailableTimeSlots}
         onBookCall={mockedOnBookCall}
@@ -141,7 +141,7 @@ describe("ScheduleMeet Component - SelectDate", () => {
   it("should should loading if it is loading", async () => {
     const user = userEvent.setup();
     renderAgain(
-      <BookCall
+      <SelectTime
         isLoading={true}
         unavailableTimeSlots={fakeUnavailableTimeSlots}
         onBookCall={mockedOnBookCall}

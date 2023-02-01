@@ -5,7 +5,7 @@ export interface SelectDatePropsI {
   onClearMessages: () => void
 }
 
-export interface BookCallPayloadI {
+export interface SelectTimePayloadI {
   time: string;
   reason: string;
 }
@@ -15,14 +15,14 @@ export interface ScheduleMeetPayloadI {
   reason: string;
 }
 
-export interface BookCallErrorI {
+export interface BookCallErrorI { // rename BookCallErrorI
   message: string
 }
 
 export interface BookCallPropsI {
   isLoading: boolean,
   unavailableTimeSlots: Array<HoursT>
-  onBookCall: (payload: BookCallPayloadI) => void;
+  onBookCall: (payload: SelectTimePayloadI) => void;
   onSendError: (payload: BookCallErrorI) => void;
   onClearMessages: () => void;
 }
@@ -36,5 +36,5 @@ export interface UseBookReturnPayloadI {
   onSetError: (payload: BookCallErrorI) => void;
   onClearError: () => void;
   onClearSuccess: () => void;
-  onSetBooking: (payload: ScheduleMeetPayloadI) => void; //Fix naming ScheduleMeet and BookCall
+  onSetBooking: (payload: ScheduleMeetPayloadI) => void;
 }

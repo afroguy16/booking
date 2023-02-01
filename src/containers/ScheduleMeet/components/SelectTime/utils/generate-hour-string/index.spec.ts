@@ -1,7 +1,7 @@
 import { ERROR_OUT_OF_BOUND } from "../../constants"
 import generateHourString from "."
 
-describe("BookCall Utility Function - GenerateHourString", () => {
+describe("SelectTime Utility Function - GenerateHourString", () => {
   it("should throw an error if -1 is passed as an argument", () => {
     expect(() => generateHourString(-1)).toThrowError(ERROR_OUT_OF_BOUND)
   })

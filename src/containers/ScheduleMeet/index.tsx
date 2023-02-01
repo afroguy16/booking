@@ -10,10 +10,10 @@ import {
 import { useState } from "react";
 
 import useBook from "./hooks/use-book";
-import BookCall from "./components/BookCall";
+import SelectTime from "./components/SelectTime";
 import SelectDate from "./components/SelectDate";
 import { SUCCESS_MESSAGE } from "./constants";
-import { BookCallPayloadI } from "./interfaces";
+import { SelectTimePayloadI } from "./interfaces";
 
 const ScheduleMeet = () => {
   const {
@@ -43,7 +43,7 @@ const ScheduleMeet = () => {
     onSelectDate(date);
   };
 
-  const onSetBookingHandler = (payload: BookCallPayloadI) => {
+  const onSetBookingHandler = (payload: SelectTimePayloadI) => {
     console.log(`${selectedDate}:${payload.time}`);
     onSetBooking({
       date: `${selectedDate}:${payload.time}`,
@@ -88,7 +88,7 @@ const ScheduleMeet = () => {
           onSelectDate={onSelectDateHandler}
           onClearMessages={onClearMessage}
         />
-        <BookCall
+        <SelectTime
           isLoading={isLoading}
           unavailableTimeSlots={bookedTimeSlots}
           onBookCall={onSetBookingHandler}
