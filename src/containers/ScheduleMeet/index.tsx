@@ -7,12 +7,13 @@ import {
   CloseButton,
   Flex,
 } from "@chakra-ui/react";
+import { useState } from "react";
+
 import useBook from "./hooks/use-book";
 import BookCall from "./components/BookCall";
 import SelectDate from "./components/SelectDate";
 import { SUCCESS_MESSAGE } from "./constants";
 import { BookCallPayloadI } from "./interfaces";
-import { useState } from "react";
 
 const ScheduleMeet = () => {
   const {
@@ -85,14 +86,14 @@ const ScheduleMeet = () => {
       <Box>
         <SelectDate
           onSelectDate={onSelectDateHandler}
-          onClearMessages={() => {}}
+          onClearMessages={onClearMessage}
         />
         <BookCall
           isLoading={isLoading}
           unavailableTimeSlots={bookedTimeSlots}
           onBookCall={onSetBookingHandler}
           onSendError={onSetError}
-          onClearMessages={() => {}}
+          onClearMessages={onClearMessage}
         />
       </Box>
     </Box>

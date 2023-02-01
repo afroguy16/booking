@@ -52,7 +52,7 @@ describe("ScheduleMeet Container", () => {
     expect(successElement).toHaveTextContent(SUCCESS_MESSAGE);
   });
 
-  it("should call onClearError if onClearMesage is triggered from the children or if the close button is clicked and there is an error message", async () => {
+  it("should call onClearError if onClearMesage is triggered if the close button in the error message is clicked", async () => {
     const error = "fake error";
     const { onClearError, onClearSuccess } = returnedData;
     jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
@@ -62,7 +62,37 @@ describe("ScheduleMeet Container", () => {
 
     const closeButtonElement = screen.getByRole("button", { name: /close/i });
     await user.click(closeButtonElement);
-    expect(onClearError).toHaveBeenCalledTimes(1);
+    expect(onClearError).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
+    expect(onClearSuccess).not.toHaveBeenCalled();
+  });
+
+  it("should call onClearError if onClearMesage is called from child (SelectDate) and there is error message", () => {
+    const error = "fake error";
+    const { onClearError, onClearSuccess } = returnedData;
+
+    jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
+    render(<ScheduleMeet />);
+
+    expect(onClearError).toHaveBeenCalledTimes(1); // called when SelectDate is mounted if there is an existing error
+    expect(onClearSuccess).not.toHaveBeenCalled();
+  });
+
+  it("should call onClearError if onClearMesage is called from child (Book Call) and there is error message", async () => {
+    const error = "fake error";
+    const user = userEvent.setup();
+    const { onClearError, onClearSuccess } = returnedData;
+
+    jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
+    render(<ScheduleMeet />);
+
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", {
+        name: /select time slot/i,
+      })
+      .at(2)!; // "02:00"
+    await user.click(randomAvailableTimeSlot);
+
+    expect(onClearError).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
     expect(onClearSuccess).not.toHaveBeenCalled();
   });
 
@@ -77,7 +107,39 @@ describe("ScheduleMeet Container", () => {
 
     const closeButtonElement = screen.getByRole("button", { name: /close/i });
     await user.click(closeButtonElement);
-    expect(onClearSuccess).toHaveBeenCalledTimes(1);
+    expect(onClearSuccess).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
+    expect(onClearError).not.toHaveBeenCalled();
+  });
+
+  it("should call onClearSuccess if onClearMesage is called from child (SelectDate) and there is a success message", () => {
+    const { onClearError, onClearSuccess } = returnedData;
+
+    jest
+      .mocked(useBook)
+      .mockReturnValue({ ...returnedData, isSuccessful: true });
+    render(<ScheduleMeet />);
+
+    expect(onClearSuccess).toHaveBeenCalledTimes(1); // called when SelectDate is mounted if there is an existing error
+    expect(onClearError).not.toHaveBeenCalled();
+  });
+
+  it("should call onClearSuccess if onClearMesage is called from child (BookCall) and there is a success message", async () => {
+    const user = userEvent.setup();
+    const { onClearError, onClearSuccess } = returnedData;
+
+    jest
+      .mocked(useBook)
+      .mockReturnValue({ ...returnedData, isSuccessful: true });
+    render(<ScheduleMeet />);
+
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", {
+        name: /select time slot/i,
+      })
+      .at(2)!; // "02:00"
+    await user.click(randomAvailableTimeSlot);
+
+    expect(onClearSuccess).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
     expect(onClearError).not.toHaveBeenCalled();
   });
 
