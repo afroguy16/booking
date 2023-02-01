@@ -5,11 +5,13 @@ import { BookCallPropsI } from "../../interfaces";
 
 import generate24HourTimeString from "./utils/generate-24-hour-time-string";
 
+const GENERATED_24_HOUR_TIME_STRING = [...generate24HourTimeString]; // TODO - kill redudundant generate24HourTimeString function
+
 const SelectTime = (props: BookCallPropsI) => {
   const { unavailableTimeSlots, onSelectTimeSlot, onClearMessages } = props;
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const isTimeSlotSelected = selectedTimeSlot !== "";
-  const dailyTimeSlot = [...generate24HourTimeString];
+  const dailyTimeSlot = GENERATED_24_HOUR_TIME_STRING;
 
   // Create an hash from the unavailable time slot so that the search can be (O)1
   const hashedUnavailableTimeSlots = useMemo(() => {
