@@ -8,7 +8,7 @@ import getPackagedMentorTotalSchedule from "./utils";
 const GET_MENTOR_AGENDA_URL = 'mentors/1/agenda'
 const TURN_ON_FAKE_ERROR = false; // change to true to test fake error - then try to select a time slot from the UI
 
-const useBook = (): UseBookReturnPayloadI => {
+const useScheduleMeeting = (): UseBookReturnPayloadI => {
   const [error, setError] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -94,4 +94,4 @@ const useBook = (): UseBookReturnPayloadI => {
   })
 }
 
-export default useBook;
+export default useScheduleMeeting;

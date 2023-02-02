@@ -2,13 +2,12 @@ import { Box, Button, ListItem, UnorderedList } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
 import { SelectTimePayloadI, SelectTimePropsI } from "../../interfaces";
-import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
+import { ERROR_PATH, ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 import { ctaStyles, timeSlotsStyles, timeSlotStyles } from "./styles";
 
 import generate24HourTimeString from "./utils/generate-24-hour-time-string";
 
 const GENERATED_24_HOUR_TIME_STRING = [...generate24HourTimeString]; // TODO - kill redudundant generate24HourTimeString function
-const ERROR_PATH = "SelectTime";
 
 const SelectTime = (props: SelectTimePropsI) => {
   const {

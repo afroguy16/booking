@@ -2,13 +2,16 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import ScheduleMeeting from ".";
-import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
+import {
+  ERROR_PATH,
+  ERROR_TIME_SLOT_UNAVAILABLE,
+} from "./components/SelectTime/constants";
 import { SUCCESS_MESSAGE } from "./constants";
-import useBook from "./hooks/use-book";
+import useScheduleMeeting from "./service/use-schedule-meeting";
 import { UseBookReturnPayloadI } from "./interfaces";
 import { HourT } from "./types";
 
-jest.mock("./hooks/use-book");
+jest.mock("./service/use-schedule-meeting");
 
 const returnedData: UseBookReturnPayloadI = {
   selectedDateBookedTimeSlots: [],
@@ -27,7 +30,7 @@ describe("ScheduleMeeting Container", () => {
 
   it("should display the error message if there is an error", () => {
     const error = "fake error";
-    jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
+    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
 
     render(<ScheduleMeeting />);
 
@@ -40,7 +43,7 @@ describe("ScheduleMeeting Container", () => {
 
   it("should display the success message if there a success message", () => {
     jest
-      .mocked(useBook)
+      .mocked(useScheduleMeeting)
       .mockReturnValue({ ...returnedData, isSuccessful: true });
 
     render(<ScheduleMeeting />);
@@ -55,7 +58,7 @@ describe("ScheduleMeeting Container", () => {
   it("should call onClearError if onClearMesage is triggered if the close button in the error message is clicked", async () => {
     const error = "fake error";
     const { onClearError, onClearSuccess } = returnedData;
-    jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
+    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
     const user = userEvent.setup();
 
     render(<ScheduleMeeting />);
@@ -70,7 +73,7 @@ describe("ScheduleMeeting Container", () => {
     const error = "fake error";
     const { onClearError, onClearSuccess } = returnedData;
 
-    jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
+    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
     render(<ScheduleMeeting />);
 
     expect(onClearError).toHaveBeenCalledTimes(1); // called when SelectDate is mounted if there is an existing error
@@ -82,7 +85,7 @@ describe("ScheduleMeeting Container", () => {
     const user = userEvent.setup();
     const { onClearError, onClearSuccess } = returnedData;
 
-    jest.mocked(useBook).mockReturnValue({ ...returnedData, error });
+    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
     render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
@@ -99,7 +102,7 @@ describe("ScheduleMeeting Container", () => {
   it("should call onClearSuccess if onClearMesage is triggered from the children or if the close button is clicked and there is a success message", async () => {
     const { onClearError, onClearSuccess } = returnedData;
     jest
-      .mocked(useBook)
+      .mocked(useScheduleMeeting)
       .mockReturnValue({ ...returnedData, isSuccessful: true });
     const user = userEvent.setup();
 
@@ -115,7 +118,7 @@ describe("ScheduleMeeting Container", () => {
     const { onClearError, onClearSuccess } = returnedData;
 
     jest
-      .mocked(useBook)
+      .mocked(useScheduleMeeting)
       .mockReturnValue({ ...returnedData, isSuccessful: true });
     render(<ScheduleMeeting />);
 
@@ -128,7 +131,7 @@ describe("ScheduleMeeting Container", () => {
     const { onClearError, onClearSuccess } = returnedData;
 
     jest
-      .mocked(useBook)
+      .mocked(useScheduleMeeting)
       .mockReturnValue({ ...returnedData, isSuccessful: true });
     render(<ScheduleMeeting />);
 
@@ -150,7 +153,7 @@ describe("ScheduleMeeting Container", () => {
       "04:00",
       "04:00", // duplicates will be filtered out by SelectTime. This is an unlikely scenario because the endpoint won't send two blocked time
     ];
-    jest.mocked(useBook).mockReturnValue({
+    jest.mocked(useScheduleMeeting).mockReturnValue({
       ...returnedData,
       selectedDateBookedTimeSlots: fakeBookedTimeSlot,
     });
@@ -163,7 +166,9 @@ describe("ScheduleMeeting Container", () => {
 
   it("should display confirming if confirming is received from the store", async () => {
     const user = userEvent.setup();
-    jest.mocked(useBook).mockReturnValue({ ...returnedData, isLoading: true });
+    jest
+      .mocked(useScheduleMeeting)
+      .mockReturnValue({ ...returnedData, isLoading: true });
     render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
@@ -182,7 +187,7 @@ describe("ScheduleMeeting Container", () => {
 
   it("should not display confirming if confirming isn't received from the store", async () => {
     const user = userEvent.setup();
-    jest.mocked(useBook).mockReturnValue({ ...returnedData });
+    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData });
     render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen
@@ -210,7 +215,7 @@ describe("ScheduleMeeting Container", () => {
       "04:00", // duplicates will be filtered out by SelectTime. This is an unlikely scenario because the endpoint won't send two blocked time
     ];
     const user = userEvent.setup();
-    jest.mocked(useBook).mockReturnValue({
+    jest.mocked(useScheduleMeeting).mockReturnValue({
       ...returnedData,
       selectedDateBookedTimeSlots: fakeBookedTimeSlot,
     });
@@ -226,12 +231,8 @@ describe("ScheduleMeeting Container", () => {
     const selectButtonElement = screen.getByText(/confirm time slot/i);
     await user.click(selectButtonElement);
 
-    const inputFieldElement = screen.getByRole("textbox");
-    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
-    await user.type(inputFieldElement, fakeReasonForCall);
-    await user.click(bookCallButtonElement);
     expect(onSetError).toHaveBeenCalledWith({
-      path: "ConfirmMeeting",
+      path: ERROR_PATH,
       message: ERROR_TIME_SLOT_UNAVAILABLE,
     });
   });
@@ -249,7 +250,7 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
     const fakeToday = "2023-01-01";
     const { onSelectDate } = returnedData;
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
-    jest.mocked(useBook).mockReturnValue({ ...returnedData });
+    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData });
     render(<ScheduleMeeting />);
 
     expect(onSelectDate).toHaveBeenNthCalledWith(1, fakeToday);
@@ -261,7 +262,7 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
     const { onSetBooking } = returnedData;
 
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
-    jest.mocked(useBook).mockReturnValue({ ...returnedData });
+    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData });
     render(<ScheduleMeeting />);
 
     const randomAvailableTimeSlot = screen

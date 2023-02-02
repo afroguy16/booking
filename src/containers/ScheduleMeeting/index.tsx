@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import format from "date-fns/format";
 
 import { SUCCESS_MESSAGE } from "./constants";
-import useBook from "./hooks/use-book";
+import useScheduleMeeting from "./service/use-schedule-meeting";
 import SelectDate from "./components/SelectDate";
 import SelectTime from "./components/SelectTime";
 import ConfirmMeeting from "./components/ConfirmMeeting";
@@ -39,7 +39,7 @@ const ScheduleMeeting = () => {
     onClearError,
     onClearSuccess,
     onSetBooking,
-  } = useBook();
+  } = useScheduleMeeting();
 
   const hasMessage = !!error || isSuccessful;
   const [selectedDate, setSelectedDate] = useState("");

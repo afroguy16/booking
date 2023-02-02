@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { HourT } from "../../types";
 
 import SelectTime from ".";
+import { ERROR_PATH, ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 
 describe("ScheduleMeeting Component - SelectDate", () => {
   const mockedOnConfirmSelectTime = jest.fn();
@@ -84,16 +85,16 @@ describe("ScheduleMeeting Component - SelectDate", () => {
     });
   });
 
-  it("should send onConfirm time with the time and availability = false as payload if the 'confirm time slot' button is clicked and the time is not available", async () => {
+  it("should send an error message to the parent if the 'confirm time slot' button is clicked and the time is not available", async () => {
     const user = userEvent.setup();
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(2)!; // "02:00"
     await user.click(randomAvailableTimeSlot);
 
     const selectButtonElement = screen.getByText(/confirm time slot/i);
     await user.click(selectButtonElement);
-    expect(mockedOnConfirmSelectTime).toHaveBeenCalledWith({
-      time: "02:00",
-      availability: false,
+    expect(mockedOnSendError).toHaveBeenCalledWith({
+      path: ERROR_PATH,
+      message: ERROR_TIME_SLOT_UNAVAILABLE,
     });
   });
 });
