@@ -60,7 +60,7 @@ const ScheduleMeeting = () => {
   }, [isSuccessful]);
 
   const getFormattedDate = useMemo(() => {
-    if (selectedDate && selectedTimeSlot.time) {
+    if (selectedDate && selectedTimeSlot.time !== "") {
       return format(
         new Date(`${selectedDate}:${selectedTimeSlot.time}`),
         "PPPPp"

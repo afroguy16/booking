@@ -48,5 +48,5 @@ Since the API sends all the data, the call to the endpoint is only made once. In
 - The hook and its utilities do not have unit test.
 - An expensive function was called during data transformation. The right place to do this is on input sanitization so there won't be any loop needed.
 - Booking submission was used as a substitute for a real POST booking endpoint
-- Timezone wasn't considered in the implementation. The suggested place to do this would be on the backend so it's consistent accross all clients
+- Timezone wasn't considered in the implementation. The suggested place to do this would be on the server side so it's consistent accross all clients
 - Only master branch was used
