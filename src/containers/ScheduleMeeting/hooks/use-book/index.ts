@@ -15,8 +15,8 @@ const useBook = (): UseBookReturnPayloadI => {
   const [selectedDateSchedule, setSelectedDateSchedule] = useState<MentorScheduleAttributesI>({ date: '', timeCollection: [] });
 
   const fetchMentorSchedule = async () => {
-    const response = await axios.get(GET_MENTOR_AGENDA_URL)
-    return response.data as MentorScheduleResponsePayloadI
+    const response = await axios.get<MentorScheduleResponsePayloadI>(GET_MENTOR_AGENDA_URL)
+    return response.data
   }
 
   const onSelectDate = async (date: string, force = false) => {
