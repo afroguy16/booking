@@ -22,10 +22,13 @@ import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 import {
   alertMessageCloseButtonStyles,
   alertMessageStyles,
-  errorWrapperStyles,
+  alertWrapperStyles,
+  availableKeyStyles,
   headingStyles,
+  keyStyles,
   scheduleMeetingWrapperStyles,
   slotSelectorsStyles,
+  unavailableKeyStyles,
 } from "./styles";
 
 const ScheduleMeeting = () => {
@@ -90,7 +93,7 @@ const ScheduleMeeting = () => {
   return (
     <Box sx={scheduleMeetingWrapperStyles}>
       {hasMessage && (
-        <Flex sx={errorWrapperStyles}>
+        <Flex sx={alertWrapperStyles}>
           <Alert
             sx={alertMessageStyles}
             status={!!error ? "error" : "success"}
@@ -120,7 +123,18 @@ const ScheduleMeeting = () => {
         </Flex>
       )}
 
-      <Heading sx={headingStyles}>Book a date and time slot</Heading>
+      <Box sx={headingStyles}>
+        <Heading>Book a date and time slot</Heading>
+        <Box sx={keyStyles}>
+          <Text>
+            <Box as="span" sx={unavailableKeyStyles}></Box>Available slots
+          </Text>
+          <Text>
+            <Box as="span" sx={availableKeyStyles}></Box>Unavailable slots
+          </Text>
+        </Box>
+      </Box>
+
       <Flex sx={slotSelectorsStyles}>
         <SelectDate
           onSelectDate={onSelectDateHandler}
