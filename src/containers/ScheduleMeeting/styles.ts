@@ -8,7 +8,8 @@ export const alertWrapperStyles = {
   justifyContent: "center",
   alignItems: "center",
   top: "20px",
-  width: "100vw"
+  width: "100vw",
+  zIndex: "1"
 }
 
 export const alertMessageStyles = {
