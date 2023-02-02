@@ -13,7 +13,7 @@ export const alertWrapperStyles = {
 }
 
 export const alertMessageStyles = {
-  width: "50%",
+  width: { base: "90%", md: "50%" },
   flexDirection: "row",
   justifyContent: "space-between"
 }

@@ -19,8 +19,7 @@ To build, run `npm build`
 -  [Chakra-UI](https://chakra-ui.com/), which is a beautiful and sleek component UI library was used to spin up things to run really quickly without having to write much CSS
 
 ### CSS
-- Very little CSS was written, which was done mostly for layout positioning. The CSS files structure could definitely be improved. But this is done as a quick propotype. However, since they are really small and focused, it's super easy to modify and maintain
-- The page isn't optimized for smaller device, and you would experience issues with the modal on an iPhone. For the best experience, use a desktop computer.
+Very little CSS was written, which was done mostly for layout positioning. The CSS files structure could definitely be improved. But this is done as a quick propotype. However, since they are really small and focused, it's super easy to modify and maintain
 
 ### System Architecture
 
@@ -44,7 +43,7 @@ Since the API sends all the data, the call to the endpoint is only made once. In
 
 ## Tradeoffs
 - Mentor ID is hard-coded as a dynamic mentor selection isn't part of the project
-- UX can be improved. It is not fully optimized for mobile.
+- UX can be improved.
 - The hook and its utilities do not have unit test.
 - An expensive function was called during data transformation. The right place to do this is on input sanitization so there won't be any loop needed.
 - Booking submission was used as a substitute for a real POST booking endpoint
