@@ -12,6 +12,9 @@ export const timeSlotsStyles = {
 };
 
 export const timeSlotStyles = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   cursor: "pointer",
   background: "#f5f7f6",
   padding: "10px 20px",
