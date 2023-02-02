@@ -1,4 +1,5 @@
 export const SUCCESS_MESSAGE = "Time slot was booked successfully";
+export const ERROR_UNKNOWN = "Something went wrong" // used to mask the real error for security reasons
 export const TWENTY_FOUR_HOUR_STRING = [
   "00:00",
   "01:00",

@@ -74,13 +74,6 @@ const ScheduleMeeting = () => {
   };
 
   const onConfirmBookingHandler = (reason: string) => {
-    // TODO - A better UX would be to disable the slots, so they aren't clickable
-    if (!selectedTimeSlot.availability) {
-      return onSetError({
-        path: "ConfirmMeeting",
-        message: ERROR_TIME_SLOT_UNAVAILABLE,
-      });
-    }
     onSetBooking({ date: selectedDate, time: selectedTimeSlot.time, reason });
   };
 

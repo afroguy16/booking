@@ -65,7 +65,7 @@ const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): 
   if (splitCalendar.length > 0) {
     splitCalendar.forEach((splitDate) => {
       if (hash[splitDate[0]] === undefined) {
-        hash[splitDate[0]] = [resetTimeString(splitDate[1])]
+        hash[splitDate[0]] = [resetTimeString(splitDate[1])] // This is expensive, thankfully in a real app sanitization would be done during input, and there will be no need to incure this cost
       } else {
         hash[splitDate[0]].push(resetTimeString(splitDate[1])) // This is expensive, thankfully in a real app sanitization would be done during input, and there will be no need to incure this cost
       }

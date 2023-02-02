@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import axios from "../../../../axios";
+import { ERROR_UNKNOWN } from "../../constants";
 import { MentorScheduleAttributesI, MentorScheduleResponsePayloadI, ScheduleMeetingPayloadI, UseBookReturnPayloadI } from "../../interfaces";
 import { HourT } from "../../types";
 import getPackagedMentorTotalSchedule from "./utils";
@@ -19,9 +20,9 @@ const useBook = (): UseBookReturnPayloadI => {
     return response.data
   }
 
-  const onSelectDate = async (date: string, force = false) => {
+  const onSelectDate = async (date: string) => {
     setIsLoading(true)
-    if (date !== selectedDateSchedule.date || force) {
+    if (date !== selectedDateSchedule.date) {
       // only make call and call the expensive functions above ones
       if (Object.keys(mentorsTotalSchedule.current.schedule).length < 1) {
         try {
@@ -32,7 +33,7 @@ const useBook = (): UseBookReturnPayloadI => {
           onSelectDate(date)
         } catch (e) {
           // Overwrite error - could send error to a logger
-          setError('Something went wrong')
+          setError(ERROR_UNKNOWN)
           setIsLoading(false)
         }
       } else {
@@ -47,10 +48,9 @@ const useBook = (): UseBookReturnPayloadI => {
     if (mentorsTotalSchedule.current.schedule[payload.date] === undefined) {
       mentorsTotalSchedule.current.schedule[payload.date] = [payload.time]
     } else {
-      mentorsTotalSchedule.current.schedule[payload.date].push(payload.time)
+      mentorsTotalSchedule.current.schedule[payload.date] = [...mentorsTotalSchedule.current.schedule[payload.date], payload.time] // force a re-render by changing the reference (cloning the array)
     }
   }
-
 
   // Simulate fake booking
   const onSetBooking = async (payload: ScheduleMeetingPayloadI) => {
@@ -71,7 +71,7 @@ const useBook = (): UseBookReturnPayloadI => {
       })
 
       addToMentorScheduleFakeSimulation(payload)
-      onSelectDate(payload.date, true)
+      setSelectedDateSchedule({ date: payload.date, timeCollection: mentorsTotalSchedule.current.schedule[payload.date] })
 
       clearTimeout(timer)
       setIsSuccessful(true)

@@ -2,11 +2,13 @@ import { Box, Button, ListItem, UnorderedList } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
 import { SelectTimePayloadI, SelectTimePropsI } from "../../interfaces";
+import { ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
 import { ctaStyles, timeSlotsStyles, timeSlotStyles } from "./styles";
 
 import generate24HourTimeString from "./utils/generate-24-hour-time-string";
 
 const GENERATED_24_HOUR_TIME_STRING = [...generate24HourTimeString]; // TODO - kill redudundant generate24HourTimeString function
+const ERROR_PATH = "SelectTime";
 
 const SelectTime = (props: SelectTimePropsI) => {
   const {
@@ -14,6 +16,7 @@ const SelectTime = (props: SelectTimePropsI) => {
     selectedDate,
     onConfirmTimeSlot,
     onClearMessages,
+    onSendError,
   } = props;
   const [selectedTimeSlot, setSelectedTimeSlot] = useState({
     time: "",
@@ -57,6 +60,12 @@ const SelectTime = (props: SelectTimePropsI) => {
   );
 
   const onConfirmSelectTimeSlotHandler = (payload: SelectTimePayloadI) => {
+    if (!payload.availability) {
+      return onSendError({
+        path: ERROR_PATH,
+        message: ERROR_TIME_SLOT_UNAVAILABLE,
+      });
+    }
     onClearMessages();
     onConfirmTimeSlot(payload);
   };
