@@ -28,7 +28,7 @@ To build, run `npm build`
 The goal was to use only what is needed in the project. That being said, global state is something that was avoided as it should even for a project in production as it is one way to fall into the pit of tight coupling.
 
 #### "Container" pattern
-"Container" pattern was used in the application. The beauty of this design style is that containers are self-contained and autonomous. Which means that it's easy to re-use in any React project (just copy and paste, then install its dependencies from any node package manager). The containers would also nicely in micro-frontends and even projects with other technologies.
+"Container" pattern was used in the application. The beauty of this design style is that containers are self-contained and autonomous. Which means that it's easy to re-use in any React project. All you need to do is to copy and paste the container folder into the React project, then install its dependencies from any node package manager. The containers would also nicely in micro-frontends and even projects with other technologies.
 
 There is no tightly coupled dependency, and all dependencies can be easily replaced with another Provider without breaking the Container.
 
@@ -43,7 +43,7 @@ Each component communicate directly with the Container (parent), through events 
 Since the API sends all the data, the call to the endpoint is only made once. In a real scenario, the data would be paginated on the Backend so this won't be needed. Also there would be a call to the backend once booking is successful.
 
 ## Tradeoffs
-- UX can be grately improved
+- UX can be grately improved. It's not mobile responsive.
 - The hook and its utilities weren't tested
 - An expensive function was called during data transformation. The right place to do this is on input sanitization so there won't be any loop needed.
 - Booking submission was used as a substitute for a real POST booking endpoint
