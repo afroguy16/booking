@@ -1,5 +1,5 @@
 export const scheduleMeetingWrapperStyles = {
-  padding: "10% 0"
+  padding: "12% 0"
 }
 
 // NB: These Alert styles are supposed to be moved up from this folder, but I won't focus on CSS architecture in this project
@@ -36,7 +36,7 @@ export const keyStyles = {
   textAlign: "center",
   display: "inline-flex",
   p: {
-    "&:first-child": {
+    "&:first-of-type": {
       marginRight: "20px"
     }
   },

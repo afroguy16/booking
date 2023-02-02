@@ -50,6 +50,7 @@ const ScheduleMeeting = () => {
     availability: false,
   });
   const [activeConfirmMeetingModal, setActiveConfirmMeeting] = useState(false);
+  const [callReason, setCallReason] = useState("");
 
   useEffect(() => {
     // A state machine flow will make sense if the changes views are complex
@@ -76,6 +77,7 @@ const ScheduleMeeting = () => {
   };
 
   const onConfirmBookingHandler = (reason: string) => {
+    setCallReason(reason);
     onSetBooking({ date: selectedDate, time: selectedTimeSlot.time, reason });
   };
 
@@ -107,9 +109,12 @@ const ScheduleMeeting = () => {
                   {!!error ? (
                     <Text>{error}</Text>
                   ) : (
-                    <Text>
-                      {SUCCESS_MESSAGE} for {getFormattedDate}
-                    </Text>
+                    <>
+                      <Text>
+                        {SUCCESS_MESSAGE} for {getFormattedDate}
+                      </Text>
+                      <Text>The reason for the call is: {callReason}</Text>
+                    </>
                   )}
                 </AlertDescription>
               </Box>
