@@ -1,11 +1,10 @@
 export const timeSlotsWrapperStyles = {
-  width: { base: "90%", md: "50%" }
+  width: { base: "95%", sm: "90%", md: "50%" }
 }
 
 export const timeSlotsStyles = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(40px, 100px))",
-  // gridTemplateColumns: { base: "repeat(auto-fit, minmax(100px, 150px))", md: "repeat(auto-fit, minmax(40px, 100px))" },
   gridGap: "20px",
   marginLeft: "0",
   marginBottom: "20px",
