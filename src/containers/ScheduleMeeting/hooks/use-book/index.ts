@@ -4,6 +4,7 @@ import { MentorScheduleAttributesI, MentorScheduleCollectionI, MentorScheduleRes
 import { HourT } from "../../types";
 
 const GET_MENTOR_AGENDA_URL = 'mentors/1/agenda'
+const TURN_ON_FAKE_ERROR = false; // change to true to test fake error - then try to select a time slot from the UI
 
 const useBook = (): UseBookReturnPayloadI => {
   const [error, setError] = useState("");
@@ -58,10 +59,8 @@ const useBook = (): UseBookReturnPayloadI => {
       // only make call and call the expensive functions above ones
       if (Object.keys(mentorsTotalSchedule.current.schedule).length < 1) {
         try {
-          console.log(mentorsTotalSchedule.current.schedule)
           const mentorSchedule = await fetchMentorSchedule()
           const packagedData = getPackagedMentorTotalSchedule(mentorSchedule)
-          console.log(packagedData)
           mentorsTotalSchedule.current.mentor = { ...packagedData.mentor }
           mentorsTotalSchedule.current.schedule = { ...packagedData.schedule }
           onSelectDate(date)
@@ -71,15 +70,38 @@ const useBook = (): UseBookReturnPayloadI => {
           setIsLoading(false)
         }
       } else {
-        console.log(mentorsTotalSchedule.current.schedule)
         setSelectedDateSchedule({ date, timeCollection: mentorsTotalSchedule.current.schedule[date] })
       }
     }
     setIsLoading(false)
   }
 
-  const onSetBooking = (payload: ScheduleMeetingPayloadI) => {
+
+  // Simulate fake booking
+  const onSetBooking = async (payload: ScheduleMeetingPayloadI) => {
     console.log(payload)
+    setIsLoading(true)
+
+    try {
+      if (TURN_ON_FAKE_ERROR) {
+        const errorMessage = { message: 'Fail to keep the selected slot, please try again' };
+        throw errorMessage;
+      }
+
+      let timer;
+      await new Promise((resolve) => {
+        timer = setTimeout(() => {
+          resolve({ message: 'OK' })
+          setIsLoading(false)
+        }, 5000)
+      })
+
+      clearTimeout(timer)
+      setIsSuccessful(true)
+    } catch (e) {
+      setError((e as { message: string }).message)
+      setIsLoading(false)
+    }
   }
 
   return ({

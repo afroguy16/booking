@@ -39,8 +39,6 @@ const ScheduleMeeting = () => {
     onSetBooking,
   } = useBook();
 
-  console.log(selectedDateBookedTimeSlots);
-
   const hasMessage = !!error || isSuccessful;
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<SelectTimePayloadI>({
@@ -93,7 +91,7 @@ const ScheduleMeeting = () => {
               <Box>
                 <AlertTitle>{!!error ? "Error" : "Success"}</AlertTitle>
                 <AlertDescription>
-                  {!!error ? error : SUCCESS_MESSAGE}
+                  {!!error ? <p>{error}</p> : <p>{SUCCESS_MESSAGE}</p>}
                 </AlertDescription>
               </Box>
             </Flex>
