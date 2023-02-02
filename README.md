@@ -1,5 +1,5 @@
 ## Introduction
-Simple standalone Meeting Booking application built with React and (Create React App)[https://reactjs.org/docs/create-a-new-react-app.html] setup
+Simple standalone Meeting Booking application built with React and [Create React App](https://reactjs.org/docs/create-a-new-react-app.html) setup
 
 ## Setup
 Super easy, run `npm i`, then `npm start`
@@ -15,8 +15,8 @@ To build, run `npm build`
 ## Design
 
 ### UI/UX
- - I used a (React Datepicker)[https://reactdatepicker.com/], which has its own design. No additional overrides was used, so the color is a bit off from the other components.
--  (Chakra-UI)[https://chakra-ui.com/], which is a beautiful and sleek component UI library was used to spin up things to run really quickly without having to write much CSS
+ - I used a [React Datepicker](https://reactdatepicker.com/), which has its own design. No additional overrides was used, so the color is a bit off from the other components.
+-  [Chakra-UI](https://chakra-ui.com/), which is a beautiful and sleek component UI library was used to spin up things to run really quickly without having to write much CSS
 
 ### CSS
 - Very little CSS was written, which was done mostly for layout positioning. The CSS files structure could definitely be improved. But this is done as a quick propotype. However, since they are really small and focused, it's super easy to modify and maintain
