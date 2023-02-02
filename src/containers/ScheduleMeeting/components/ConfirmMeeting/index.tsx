@@ -12,18 +12,24 @@ import {
   ModalFooter,
   Button,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConfirmMeetingPropsI } from "../../interfaces";
 import { MINIMUM_REASON_CHAR_LENGTH } from "../SelectTime/constants";
 
 const ConfirmMeeting = ({
   isOpen,
   isLoading,
+  isSuccessful,
   onClose,
   onConfirmMeeting,
 }: ConfirmMeetingPropsI) => {
   const [callReason, setCallReason] = useState("");
   const isValidReason = callReason.length >= MINIMUM_REASON_CHAR_LENGTH;
+
+  // preserve reason until booking is successfully sent
+  useEffect(() => {
+    setCallReason("");
+  }, [isSuccessful]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -40,6 +46,7 @@ const ConfirmMeeting = ({
             <Textarea
               placeholder="Start typing..."
               onChange={(e) => setCallReason(e.target.value)}
+              defaultValue={callReason}
             />
             <FormHelperText>
               Enter at least {MINIMUM_REASON_CHAR_LENGTH} characters

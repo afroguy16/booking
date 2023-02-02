@@ -19,7 +19,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
         isLoading={false}
         unavailableTimeSlots={fakeUnavailableTimeSlots}
         selectedDate=""
-        onSelectTimeSlot={mockedOnConfirmSelectTime} //TODO - fix this
+        onConfirmTimeSlot={mockedOnConfirmSelectTime} //TODO - fix this
         onSendError={mockedOnSendError}
         onClearMessages={mockedOnClearMessages}
       />
@@ -41,7 +41,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
 
   it("should activate a time slot for confirmation and call the clearMessages callback if any time slot is clicked", async () => {
     const user = userEvent.setup();
-    const selectButtonElement = screen.getByText(/select time slot/i);
+    const selectButtonElement = screen.getByText(/confirm time slot/i);
     expect(selectButtonElement).toBeDisabled();
 
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!;
@@ -76,7 +76,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(3)!; // "03:00"
     await user.click(randomAvailableTimeSlot);
 
-    const selectButtonElement = screen.getByText(/select time slot/i);
+    const selectButtonElement = screen.getByText(/confirm time slot/i);
     await user.click(selectButtonElement);
     expect(mockedOnConfirmSelectTime).toHaveBeenCalledWith({
       time: "03:00",
@@ -89,7 +89,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
     const randomAvailableTimeSlot = screen.getAllByRole("option").at(2)!; // "02:00"
     await user.click(randomAvailableTimeSlot);
 
-    const selectButtonElement = screen.getByText(/select time slot/i);
+    const selectButtonElement = screen.getByText(/confirm time slot/i);
     await user.click(selectButtonElement);
     expect(mockedOnConfirmSelectTime).toHaveBeenCalledWith({
       time: "02:00",

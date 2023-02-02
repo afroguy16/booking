@@ -119,7 +119,7 @@ const ScheduleMeeting = () => {
           isLoading={isLoading}
           unavailableTimeSlots={selectedDateBookedTimeSlots}
           selectedDate={selectedDate}
-          onSelectTimeSlot={onSelectTimeSlotHandler}
+          onConfirmTimeSlot={onSelectTimeSlotHandler}
           onSendError={onSetError}
           onClearMessages={onClearMessage}
         />
@@ -128,6 +128,7 @@ const ScheduleMeeting = () => {
       <ConfirmMeeting
         isOpen={activeConfirmMeetingModal}
         isLoading={isLoading}
+        isSuccessful={isSuccessful}
         onClose={() => setActiveConfirmMeeting(false)}
         onConfirmMeeting={onConfirmBookingHandler}
       />

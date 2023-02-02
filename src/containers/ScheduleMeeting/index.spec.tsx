@@ -87,7 +87,7 @@ describe("ScheduleMeeting Container", () => {
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
-        name: /select time slot/i,
+        name: /confirm time slot/i,
       })
       .at(2)!; // "02:00"
     await user.click(randomAvailableTimeSlot);
@@ -134,7 +134,7 @@ describe("ScheduleMeeting Container", () => {
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
-        name: /select time slot/i,
+        name: /confirm time slot/i,
       })
       .at(2)!; // "02:00"
     await user.click(randomAvailableTimeSlot);
@@ -168,12 +168,12 @@ describe("ScheduleMeeting Container", () => {
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
-        name: /select time slot/i,
+        name: /confirm time slot/i,
       })
       .at(2)!; // "02:00"
     await user.click(randomAvailableTimeSlot);
 
-    const selectButtonElement = screen.getByText(/select time slot/i);
+    const selectButtonElement = screen.getByText(/confirm time slot/i);
     await user.click(selectButtonElement);
 
     const loadingText = screen.getByText(/confirming/i);
@@ -187,12 +187,12 @@ describe("ScheduleMeeting Container", () => {
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
-        name: /select time slot/i,
+        name: /confirm time slot/i,
       })
       .at(2)!; // "02:00"
     await user.click(randomAvailableTimeSlot);
 
-    const selectButtonElement = screen.getByText(/select time slot/i);
+    const selectButtonElement = screen.getByText(/confirm time slot/i);
     await user.click(selectButtonElement);
 
     const loadingText = screen.queryByText("confirming");
@@ -218,12 +218,12 @@ describe("ScheduleMeeting Container", () => {
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
-        name: /select time slot/i,
+        name: /confirm time slot/i,
       })
       .at(4)!; // "04:00"
     await user.click(randomAvailableTimeSlot);
 
-    const selectButtonElement = screen.getByText(/select time slot/i);
+    const selectButtonElement = screen.getByText(/confirm time slot/i);
     await user.click(selectButtonElement);
 
     const inputFieldElement = screen.getByRole("textbox");
@@ -266,12 +266,12 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
 
     const randomAvailableTimeSlot = screen
       .getAllByRole("option", {
-        name: /select time slot/i,
+        name: /confirm time slot/i,
       })
       .at(4)!; // "04:00"
     fireEvent.click(randomAvailableTimeSlot);
 
-    const selectButtonElement = screen.getByText(/select time slot/i);
+    const selectButtonElement = screen.getByText(/confirm time slot/i);
     fireEvent.click(selectButtonElement);
 
     const inputFieldElement = screen.getByRole("textbox");

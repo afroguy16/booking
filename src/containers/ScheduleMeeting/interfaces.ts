@@ -53,11 +53,11 @@ export interface SelectDatePropsI {
   onClearMessages: () => void
 }
 
-export interface SelectTimePropsI { // TODO - rename this
+export interface SelectTimePropsI {
   isLoading: boolean;
   unavailableTimeSlots: Array<HourT>;
   selectedDate: string;
-  onSelectTimeSlot: (payload: SelectTimePayloadI) => void;
+  onConfirmTimeSlot: (payload: SelectTimePayloadI) => void;
   onSendError: (error: ScheduleMeetingErrorI) => void;
   onClearMessages: () => void;
 }
@@ -65,6 +65,7 @@ export interface SelectTimePropsI { // TODO - rename this
 export interface ConfirmMeetingPropsI {
   isOpen: boolean
   isLoading: boolean
+  isSuccessful?: boolean
   onClose: () => void
   onConfirmMeeting: (reason: string) => void
 }

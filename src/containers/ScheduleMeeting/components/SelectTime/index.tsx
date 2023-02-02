@@ -1,7 +1,7 @@
 import { Box, Button, ListItem, UnorderedList } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
-import { SelectTimePropsI } from "../../interfaces";
+import { SelectTimePayloadI, SelectTimePropsI } from "../../interfaces";
 import { ctaStyles, timeSlotsStyles, timeSlotStyles } from "./styles";
 
 import generate24HourTimeString from "./utils/generate-24-hour-time-string";
@@ -12,18 +12,15 @@ const SelectTime = (props: SelectTimePropsI) => {
   const {
     unavailableTimeSlots,
     selectedDate,
-    onSelectTimeSlot,
+    onConfirmTimeSlot,
     onClearMessages,
   } = props;
-  // const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = useState({
     time: "",
     date: "",
-  });
+  }); // TODO - move this state to parent once selected
   const isTimeSlotSelected = selectedTimeSlot.time !== "";
   const dailyTimeSlot = GENERATED_24_HOUR_TIME_STRING;
-
-  console.log(selectedDate, selectedTimeSlot.date);
 
   // Create an hash from the unavailable time slot so that the search can be (O)1
   const hashedUnavailableTimeSlots = useMemo(() => {
@@ -59,13 +56,18 @@ const SelectTime = (props: SelectTimePropsI) => {
     [onClearMessages, selectedDate]
   );
 
+  const onConfirmSelectTimeSlotHandler = (payload: SelectTimePayloadI) => {
+    onClearMessages();
+    onConfirmTimeSlot(payload);
+  };
+
   const dailyTimeSlotElements = useMemo(
     () =>
       dailyTimeSlot.map((timeSlot) => (
         <ListItem
           sx={timeSlotStyles}
           role={"option"}
-          aria-label="select time slot"
+          aria-label="confirm time slot"
           key={timeSlot}
           className={[
             isTimeTaken(timeSlot) ? "unavailable" : "",
@@ -100,13 +102,13 @@ const SelectTime = (props: SelectTimePropsI) => {
           colorScheme="teal"
           isDisabled={!isTimeSlotSelected}
           onClick={() =>
-            onSelectTimeSlot({
+            onConfirmSelectTimeSlotHandler({
               time: selectedTimeSlot.time,
               availability: !isTimeTaken(selectedTimeSlot.time),
             })
           }
         >
-          Select time slot
+          Confirm time slot
         </Button>
       </Box>
     </Box>
