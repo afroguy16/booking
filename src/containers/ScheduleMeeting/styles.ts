@@ -1,5 +1,5 @@
 export const scheduleMeetingWrapperStyles = {
-  padding: "10% 0"
+  padding: "5% 0"
 }
 
 // NB: These Alert styles are supposed to be moved up from this folder, but I won't focus on CSS architecture in this project

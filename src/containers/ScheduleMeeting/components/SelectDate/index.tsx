@@ -28,7 +28,12 @@ const SelectDate = ({ onSelectDate, onClearMessages }: SelectDatePropsI) => {
 
   return (
     <Box>
-      <DatePicker selected={startDate} onChange={onSelectDateHandler} inline />
+      <DatePicker
+        selected={startDate}
+        minDate={new Date()}
+        onChange={onSelectDateHandler}
+        inline
+      />
     </Box>
   );
 };

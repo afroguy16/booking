@@ -79,7 +79,6 @@ const useBook = (): UseBookReturnPayloadI => {
 
   // Simulate fake booking
   const onSetBooking = async (payload: ScheduleMeetingPayloadI) => {
-    console.log(payload)
     setIsLoading(true)
 
     try {
@@ -93,7 +92,7 @@ const useBook = (): UseBookReturnPayloadI => {
         timer = setTimeout(() => {
           resolve({ message: 'OK' })
           setIsLoading(false)
-        }, 5000)
+        }, 500)
       })
 
       clearTimeout(timer)
