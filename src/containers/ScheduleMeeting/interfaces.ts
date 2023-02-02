@@ -1,13 +1,13 @@
 import { HourT } from "./types"
 
 export interface SelectTimePayloadI {
-  time: string;
+  time: HourT;
   availability: boolean;
 }
 
 export interface ScheduleMeetingPayloadI {
   date: string;
-  time: string;
+  time: HourT;
   reason: string;
 }
 

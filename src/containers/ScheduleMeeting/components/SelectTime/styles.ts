@@ -15,14 +15,14 @@ export const timeSlotStyles = {
   ':hover': {
     background: "#e1e3e2",
   },
+  '&.active': {
+    background: '#FED8B1',
+  },
   '&.unavailable': {
     background: 'orange',
     color: 'white',
     cursor: "default",
   },
-  '&.active': {
-    background: '#FED8B1',
-  }
 };
 
 export const ctaStyles = {

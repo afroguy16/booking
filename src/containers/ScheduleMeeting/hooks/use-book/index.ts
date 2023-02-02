@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import axios from "../../../../axios";
-import { MentorScheduleAttributesI, MentorScheduleCollectionI, MentorScheduleResponsePayloadI, ScheduleMeetingPayloadI, UseBookReturnPayloadI } from "../../interfaces";
+import { MentorScheduleAttributesI, MentorScheduleResponsePayloadI, ScheduleMeetingPayloadI, UseBookReturnPayloadI } from "../../interfaces";
 import { HourT } from "../../types";
+import getPackagedMentorTotalSchedule from "./utils";
 
 const GET_MENTOR_AGENDA_URL = 'mentors/1/agenda'
 const TURN_ON_FAKE_ERROR = false; // change to true to test fake error - then try to select a time slot from the UI
@@ -15,47 +16,12 @@ const useBook = (): UseBookReturnPayloadI => {
 
   const fetchMentorSchedule = async () => {
     const response = await axios.get(GET_MENTOR_AGENDA_URL)
-    return response.data
+    return response.data as MentorScheduleResponsePayloadI
   }
 
-  const transformTime = (time: string) => `${time.split(":")[0]}:00`
-
-  const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): { [key: string]: Array<HourT> } => {
-    let splitCalendar: Array<Array<string>> = []
-
-    // initial data transformation
-    rawCalendar.forEach(rawDate => {
-      splitCalendar.push(rawDate.date_time.split(" "))
-    })
-
-    // next transformation - hash is used to ensure it's not an O(n^2) operation
-    const hash: { [key: string]: Array<string> } = {}
-    if (splitCalendar.length > 0) {
-      splitCalendar.forEach((splitDate) => {
-        if (hash[splitDate[0]] === undefined) {
-          hash[splitDate[0]] = [transformTime(splitDate[1])]
-        } else {
-          hash[splitDate[0]].push(transformTime(splitDate[1])) // This is expensive, thankfully in a real app sanitization would be done during input, and there will be no need to incure this cost
-        }
-      })
-    }
-    return hash as { [key: string]: Array<HourT> }
-  }
-
-  const getPackagedMentorTotalSchedule = (rawMentorSchedule: MentorScheduleResponsePayloadI): MentorScheduleCollectionI => {
-    const schedule = getExtractedMentorSchedule(rawMentorSchedule.calendar)
-    return ({
-      mentor: {
-        name: rawMentorSchedule.mentor.name,
-        time_zone: rawMentorSchedule.mentor.time_zone
-      },
-      schedule
-    })
-  }
-
-  const onSelectDate = async (date: string) => {
+  const onSelectDate = async (date: string, force = false) => {
     setIsLoading(true)
-    if (date !== selectedDateSchedule.date) {
+    if (date !== selectedDateSchedule.date || force) {
       // only make call and call the expensive functions above ones
       if (Object.keys(mentorsTotalSchedule.current.schedule).length < 1) {
         try {
@@ -76,6 +42,15 @@ const useBook = (): UseBookReturnPayloadI => {
     setIsLoading(false)
   }
 
+  // NB: This is strictly for UI simulation and shouldn't be done in a real. In a real project, we would call the backend again to get the updated list
+  const addToMentorScheduleFakeSimulation = (payload: ScheduleMeetingPayloadI) => {
+    if (mentorsTotalSchedule.current.schedule[payload.date] === undefined) {
+      mentorsTotalSchedule.current.schedule[payload.date] = [payload.time]
+    } else {
+      mentorsTotalSchedule.current.schedule[payload.date].push(payload.time)
+    }
+  }
+
 
   // Simulate fake booking
   const onSetBooking = async (payload: ScheduleMeetingPayloadI) => {
@@ -94,6 +69,9 @@ const useBook = (): UseBookReturnPayloadI => {
           setIsLoading(false)
         }, 500)
       })
+
+      addToMentorScheduleFakeSimulation(payload)
+      onSelectDate(payload.date, true)
 
       clearTimeout(timer)
       setIsSuccessful(true)

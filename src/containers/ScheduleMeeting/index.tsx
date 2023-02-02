@@ -7,8 +7,10 @@ import {
   CloseButton,
   Flex,
   Heading,
+  Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import format from "date-fns/format";
 
 import { SUCCESS_MESSAGE } from "./constants";
 import useBook from "./hooks/use-book";
@@ -54,6 +56,16 @@ const ScheduleMeeting = () => {
     }
   }, [isSuccessful]);
 
+  const getFormattedDate = useMemo(() => {
+    if (selectedDate && selectedTimeSlot.time) {
+      return format(
+        new Date(`${selectedDate}:${selectedTimeSlot.time}`),
+        "PPPPp"
+      );
+    }
+    return "";
+  }, [selectedDate, selectedTimeSlot.time]);
+
   const onClearMessage = () => {
     if (error) {
       return onClearError();
@@ -97,7 +109,13 @@ const ScheduleMeeting = () => {
               <Box>
                 <AlertTitle>{!!error ? "Error" : "Success"}</AlertTitle>
                 <AlertDescription>
-                  {!!error ? <p>{error}</p> : <p>{SUCCESS_MESSAGE}</p>}
+                  {!!error ? (
+                    <Text>{error}</Text>
+                  ) : (
+                    <Text>
+                      {SUCCESS_MESSAGE} for {getFormattedDate}
+                    </Text>
+                  )}
                 </AlertDescription>
               </Box>
             </Flex>
