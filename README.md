@@ -1,46 +1,45 @@
-# Getting Started with Create React App
+## Introduction
+Simple standalone Meeting Booking application built with React and Create React App setup
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Setup
+Super easy, run `npm i`, then `npm start`
 
-## Available Scripts
+## Test
+Majority of the Application was built in a TDD style. The hook is the part with no test.
 
-In the project directory, you can run:
+To run the test, run `npm test`
 
-### `npm start`
+## Build
+To build, run `npm build`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Design
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### UI/UX
+I used a react-datepick, which has its own design. No additional overrides was used, so the color is a bit off from the other components.
 
-### `npm test`
+### CSS
+- Chakra-UI, which is a beautiful and sleek component UI was used to spin up things to run really quickly without having to write much CSS
+- Very little CSS was written mostly for layout positioning. The CSS files are small but could definitely be better in terms of structure. But it's really a quick propotype with little thoughts towards styles scalability. But since it's small, it's super easy to modify and maintain
+- The page isn't device responsive. But the best experience, use a desktop computer.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### System Architecture
 
-### `npm run build`
+#### Goal and State management
+The goal was to use what is needed in the project. That being said, global state is something that is avoided, and should be avoided even in a project in production.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### "Container" pattern
+"Container" pattern was used in the application. The beauty of container pattern is that it's self contained and autonomous. Which means that it's easy to re-use in any React project, and will play nicely in projects with other technologies.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+There is no tightly coupled dependencies, and all dependencies can be easily replaced with another Provider without breaking the Container.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+There is a single flow of truth, which is:
+Service (React Hook) -> Container -> Components
 
-### `npm run eject`
+Each component communicate directly with the Container (parent), through events and direct data injection from the parent.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Tradeoffs
+- The functionality is not complete and the UX can be grately improved
+- The hook and its utilities weren't tested
+- An expensive function was called during data transformation. The right place to do this is on input sanitization so there won't be any loop needed.
+- Dummy POST booking was used (in place a real POST endpoint)
+- Timezone wasn't considered in the implementation. This is also a good candidate to be done on the server for the sake of consistency
