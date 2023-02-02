@@ -149,12 +149,15 @@ const ScheduleMeeting = () => {
         />
       </Flex>
 
-      <ConfirmMeeting
-        isOpen={activeConfirmMeetingModal}
-        isLoading={isLoading}
-        onClose={() => setActiveConfirmMeeting(false)}
-        onConfirmMeeting={onConfirmBookingHandler}
-      />
+      {/* Preserve call reason, until successfully submitted */}
+      {!isSuccessful && (
+        <ConfirmMeeting
+          isOpen={activeConfirmMeetingModal}
+          isLoading={isLoading}
+          onClose={() => setActiveConfirmMeeting(false)}
+          onConfirmMeeting={onConfirmBookingHandler}
+        />
+      )}
     </Box>
   );
 };
