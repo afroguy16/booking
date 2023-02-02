@@ -65,7 +65,6 @@ export interface SelectTimePropsI {
 export interface ConfirmMeetingPropsI {
   isOpen: boolean
   isLoading: boolean
-  isSuccessful?: boolean
   onClose: () => void
   onConfirmMeeting: (reason: string) => void
 }

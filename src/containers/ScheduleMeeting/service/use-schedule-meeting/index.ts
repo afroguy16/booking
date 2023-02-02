@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "../../../../axios";
 import { ERROR_UNKNOWN } from "../../constants";
-import { MentorScheduleAttributesI, MentorScheduleResponsePayloadI, ScheduleMeetingPayloadI, UseBookReturnPayloadI } from "../../interfaces";
+import { MentorScheduleAttributesI, MentorScheduleResponsePayloadI, ScheduleMeetingPayloadI, UseBookReturnPayloadI, ScheduleMeetingErrorI } from "../../interfaces";
 import { HourT } from "../../types";
 import getPackagedMentorTotalSchedule from "./utils";
 
@@ -43,13 +43,20 @@ const useScheduleMeeting = (): UseBookReturnPayloadI => {
     setIsLoading(false)
   }
 
-  // NB: This is strictly for UI simulation and shouldn't be done in a real. In a real project, we would call the backend again to get the updated list
+  // NB: This is strictly for UI simulation and shouldn't be done in a real project. Instead we would call the backend again to get the updated list
   const addToMentorScheduleFakeSimulation = (payload: ScheduleMeetingPayloadI) => {
     if (mentorsTotalSchedule.current.schedule[payload.date] === undefined) {
       mentorsTotalSchedule.current.schedule[payload.date] = [payload.time]
     } else {
       mentorsTotalSchedule.current.schedule[payload.date] = [...mentorsTotalSchedule.current.schedule[payload.date], payload.time] // force a re-render by changing the reference (cloning the array)
     }
+  }
+
+  const onSetError = (error: ScheduleMeetingErrorI) => {
+    if (isSuccessful) {
+      setIsSuccessful(false)
+    }
+    setError(error.message) // We could extract and log the path, which could assist in debugging
   }
 
   // Simulate fake booking
@@ -87,7 +94,7 @@ const useScheduleMeeting = (): UseBookReturnPayloadI => {
     isLoading,
     selectedDateBookedTimeSlots: selectedDateSchedule?.timeCollection || [],
     onSelectDate,
-    onSetError: (error) => setError(error.message), // We could extract and log the path, which could assist in debugging
+    onSetError,
     onClearError: () => setError(""),
     onClearSuccess: () => setIsSuccessful(false),
     onSetBooking
