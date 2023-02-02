@@ -43,6 +43,7 @@ Each component communicate directly with the Container (parent), through events 
 Since the API sends all the data, the call to the endpoint is only made once. In a real scenario, the data would be paginated on the Backend so this won't be needed. Also there would be a call to the backend once booking is successful.
 
 ## Tradeoffs
+- Mentor ID is hard-coded as a dynamic selection isn't part of the project
 - UX can be grately improved. It's not mobile responsive.
 - The hook and its utilities weren't tested
 - An expensive function was called during data transformation. The right place to do this is on input sanitization so there won't be any loop needed.
