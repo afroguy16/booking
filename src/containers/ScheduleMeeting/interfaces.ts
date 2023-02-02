@@ -53,9 +53,10 @@ export interface SelectDatePropsI {
   onClearMessages: () => void
 }
 
-export interface BookCallPropsI { // TODO - rename this
+export interface SelectTimePropsI { // TODO - rename this
   isLoading: boolean;
-  unavailableTimeSlots: Array<HourT>
+  unavailableTimeSlots: Array<HourT>;
+  selectedDate: string;
   onSelectTimeSlot: (payload: SelectTimePayloadI) => void;
   onSendError: (error: ScheduleMeetingErrorI) => void;
   onClearMessages: () => void;

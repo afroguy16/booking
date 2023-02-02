@@ -1,18 +1,29 @@
 import { Box, Button, ListItem, UnorderedList } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
-import { BookCallPropsI } from "../../interfaces";
+import { SelectTimePropsI } from "../../interfaces";
 import { ctaStyles, timeSlotsStyles, timeSlotStyles } from "./styles";
 
 import generate24HourTimeString from "./utils/generate-24-hour-time-string";
 
 const GENERATED_24_HOUR_TIME_STRING = [...generate24HourTimeString]; // TODO - kill redudundant generate24HourTimeString function
 
-const SelectTime = (props: BookCallPropsI) => {
-  const { unavailableTimeSlots, onSelectTimeSlot, onClearMessages } = props;
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
-  const isTimeSlotSelected = selectedTimeSlot !== "";
+const SelectTime = (props: SelectTimePropsI) => {
+  const {
+    unavailableTimeSlots,
+    selectedDate,
+    onSelectTimeSlot,
+    onClearMessages,
+  } = props;
+  // const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState({
+    time: "",
+    date: "",
+  });
+  const isTimeSlotSelected = selectedTimeSlot.time !== "";
   const dailyTimeSlot = GENERATED_24_HOUR_TIME_STRING;
+
+  console.log(selectedDate, selectedTimeSlot.date);
 
   // Create an hash from the unavailable time slot so that the search can be (O)1
   const hashedUnavailableTimeSlots = useMemo(() => {
@@ -32,16 +43,20 @@ const SelectTime = (props: BookCallPropsI) => {
   );
 
   const isSelectedTimeSlot = useCallback(
-    (hour: string) => selectedTimeSlot === hour,
-    [selectedTimeSlot]
+    (hour: string) => {
+      return (
+        selectedTimeSlot.time === hour && selectedTimeSlot.date === selectedDate
+      );
+    },
+    [selectedTimeSlot, selectedDate]
   );
 
   const onSelectTimeSlotHandler = useCallback(
     (timeSlot: string) => {
-      setSelectedTimeSlot(timeSlot);
+      setSelectedTimeSlot({ time: timeSlot, date: selectedDate || "" });
       onClearMessages();
     },
-    [onClearMessages]
+    [onClearMessages, selectedDate]
   );
 
   const dailyTimeSlotElements = useMemo(
@@ -86,8 +101,8 @@ const SelectTime = (props: BookCallPropsI) => {
           isDisabled={!isTimeSlotSelected}
           onClick={() =>
             onSelectTimeSlot({
-              time: selectedTimeSlot,
-              availability: !isTimeTaken(selectedTimeSlot),
+              time: selectedTimeSlot.time,
+              availability: !isTimeTaken(selectedTimeSlot.time),
             })
           }
         >

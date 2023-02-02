@@ -18,6 +18,7 @@ describe("ScheduleMeeting Component - SelectDate", () => {
       <SelectTime
         isLoading={false}
         unavailableTimeSlots={fakeUnavailableTimeSlots}
+        selectedDate=""
         onSelectTimeSlot={mockedOnConfirmSelectTime} //TODO - fix this
         onSendError={mockedOnSendError}
         onClearMessages={mockedOnClearMessages}

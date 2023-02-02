@@ -2,7 +2,7 @@
 
 // This doesn't do anything. It's left here so it's easy for the reviewer to understand how the transformation was done.
 // In a real app such transformation won't be need becasue the data awould be store in a way that it's useful, else. 
-// Else a transformer utility would be needed.
+// Else a transformer utility like this would be created and tested outside the hook.
 
 // Time example format 13:42:01 -> transformed to -> 13:00
 const transformTime = (time: string) => `${time.split(":")[0]}:00`
@@ -22,6 +22,8 @@ const transformTime = (time: string) => `${time.split(":")[0]}:00`
 //       },
 //   ]
 // }
+
+
 const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): any => {
   let splitCalendar: Array<Array<string>> = []
 
@@ -41,18 +43,13 @@ const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): 
     splitCalendar.push(rawDate.date_time.split(" "))
   })
 
-  // console.log('got called')
-
-  // console.log(splitCalendar)
 
   // next transformation - hash is used to ensure we don't do an O(n^2)
   // {
   //   "2023-01-23": ["13:00:00", "14:00:00"],
   //   "2023-01-27", ["09:00:00]
   // }
-
   const hash: { [key: string]: Array<string> } = {}
-  // const s = { "2023-01-23": [] }
   if (splitCalendar.length > 0) {
     splitCalendar.forEach((splitDate) => {
       if (hash[splitDate[0]] === undefined) {
@@ -63,19 +60,6 @@ const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): 
     })
   }
   return hash
-
-  // // packagedData
-  // // {
-  // //   {date: "2023-01-23": schedule: ["13:00:00", "14:00:00"]},
-  // //   {date: "2023-01-27": schedule: ["09:00:00]}
-  // // }
-  // const packagedData: Array<{ date: string, timeCollection: Array<HourT> }> = []
-
-  // for (const [key, value] of Object.entries(hash)) {
-  //   packagedData.push({ date: key, timeCollection: <Array<HourT>>value })
-  // }
-
-  // return packagedData;
 }
 
 export { }

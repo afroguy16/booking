@@ -28,7 +28,7 @@ const useBook = (): UseBookReturnPayloadI => {
       splitCalendar.push(rawDate.date_time.split(" "))
     })
 
-    // next transformation - hash is used to ensure we don't do an O(n^2)
+    // next transformation - hash is used to ensure it's not an O(n^2) operation
     const hash: { [key: string]: Array<string> } = {}
     if (splitCalendar.length > 0) {
       splitCalendar.forEach((splitDate) => {

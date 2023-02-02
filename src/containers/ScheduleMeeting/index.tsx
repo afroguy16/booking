@@ -8,7 +8,7 @@ import {
   Flex,
   Heading,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { SUCCESS_MESSAGE } from "./constants";
 import useBook from "./hooks/use-book";
@@ -47,6 +47,13 @@ const ScheduleMeeting = () => {
   });
   const [activeConfirmMeetingModal, setActiveConfirmMeeting] = useState(false);
 
+  useEffect(() => {
+    // A state machine flow will make sense if the changes views are complex
+    if (isSuccessful) {
+      setActiveConfirmMeeting(false);
+    }
+  }, [isSuccessful]);
+
   const onClearMessage = () => {
     if (error) {
       return onClearError();
@@ -63,7 +70,6 @@ const ScheduleMeeting = () => {
       });
     }
     onSetBooking({ date: selectedDate, time: selectedTimeSlot.time, reason });
-    setActiveConfirmMeeting(false);
   };
 
   const onSelectDateHandler = (date: string) => {
@@ -112,6 +118,7 @@ const ScheduleMeeting = () => {
         <SelectTime
           isLoading={isLoading}
           unavailableTimeSlots={selectedDateBookedTimeSlots}
+          selectedDate={selectedDate}
           onSelectTimeSlot={onSelectTimeSlotHandler}
           onSendError={onSetError}
           onClearMessages={onClearMessage}
