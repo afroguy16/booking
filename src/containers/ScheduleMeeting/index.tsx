@@ -18,7 +18,6 @@ import SelectDate from "./components/SelectDate";
 import SelectTime from "./components/SelectTime";
 import ConfirmMeeting from "./components/ConfirmMeeting";
 import { SelectTimePayloadI } from "./interfaces";
-import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 import {
   alertMessageCloseButtonStyles,
   alertMessageStyles,
