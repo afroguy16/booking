@@ -59,8 +59,7 @@ export const unavailableKeyStyles = {
 }
 
 export const slotSelectorsStyles = {
-  flexDirection: "row",
+  display: "flex",
   justifyContent: "center",
-  alignItems: "center",
   gridGap: "40px"
 }

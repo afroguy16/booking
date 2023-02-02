@@ -3,7 +3,12 @@ import { useCallback, useMemo, useState } from "react";
 
 import { SelectTimePayloadI, SelectTimePropsI } from "../../interfaces";
 import { ERROR_PATH, ERROR_TIME_SLOT_UNAVAILABLE } from "./constants";
-import { ctaStyles, timeSlotsStyles, timeSlotStyles } from "./styles";
+import {
+  ctaStyles,
+  timeSlotsStyles,
+  timeSlotStyles,
+  timeSlotsWrapperStyles,
+} from "./styles";
 
 import generate24HourTimeString from "./utils/generate-24-hour-time-string";
 
@@ -92,7 +97,7 @@ const SelectTime = (props: SelectTimePropsI) => {
   );
 
   return (
-    <Box>
+    <Box sx={timeSlotsWrapperStyles}>
       <UnorderedList sx={timeSlotsStyles}>
         {dailyTimeSlotElements}
       </UnorderedList>

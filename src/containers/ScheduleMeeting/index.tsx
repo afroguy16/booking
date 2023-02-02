@@ -139,7 +139,7 @@ const ScheduleMeeting = () => {
         </Box>
       </Box>
 
-      <Flex sx={slotSelectorsStyles}>
+      <Box sx={slotSelectorsStyles}>
         <SelectDate
           onSelectDate={onSelectDateHandler}
           onClearMessages={onClearMessage}
@@ -152,7 +152,7 @@ const ScheduleMeeting = () => {
           onSendError={onSetError}
           onClearMessages={onClearMessage}
         />
-      </Flex>
+      </Box>
 
       {/* Preserve call reason, until successfully submitted */}
       {!isSuccessful && (

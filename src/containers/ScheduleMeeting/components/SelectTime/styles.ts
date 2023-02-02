@@ -1,10 +1,14 @@
+export const timeSlotsWrapperStyles = {
+  width: "50%"
+}
+
 export const timeSlotsStyles = {
   display: "grid",
-  gridTemplateColumns: "repeat(4, 1fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(40px, 100px))",
   gridGap: "20px",
   marginLeft: "0",
   marginBottom: "20px",
-  listStyleType: "none",
+  listStyleType: "none"
 };
 
 export const timeSlotStyles = {
