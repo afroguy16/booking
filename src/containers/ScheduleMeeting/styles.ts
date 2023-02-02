@@ -63,5 +63,5 @@ export const slotSelectorsStyles = {
   justifyContent: "center",
   gridGap: "40px",
   flexDirection: { base: "column", md: "row", lg: "row" },
-  alignItems: { base: "center", md: "flex-start", lg: "flex-start" }
+  alignItems: { base: "center", md: "flex-start", lg: "flex-start" },
 }
