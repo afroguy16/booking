@@ -1,5 +1,5 @@
 ## Introduction
-Simple standalone Meeting Booking application built with React and Create React App setup
+Simple standalone Meeting Booking application built with React and (Create React App)[https://reactjs.org/docs/create-a-new-react-app.html] setup
 
 ## Setup
 Super easy, run `npm i`, then `npm start`
@@ -7,7 +7,7 @@ Super easy, run `npm i`, then `npm start`
 ## Test
 Majority of the Application was built in a TDD style. The hook is the part with no test.
 
-To run the test, run `npm test`
+To unit test the app, run `npm test`
 
 ## Build
 To build, run `npm build`
@@ -15,32 +15,37 @@ To build, run `npm build`
 ## Design
 
 ### UI/UX
-I used a react-datepick, which has its own design. No additional overrides was used, so the color is a bit off from the other components.
+ - I used a (React Datepicker)[https://reactdatepicker.com/], which has its own design. No additional overrides was used, so the color is a bit off from the other components.
+-  (Chakra-UI)[https://chakra-ui.com/], which is a beautiful and sleek component UI library was used to spin up things to run really quickly without having to write much CSS
 
 ### CSS
-- Chakra-UI, which is a beautiful and sleek component UI was used to spin up things to run really quickly without having to write much CSS
-- Very little CSS was written mostly for layout positioning. The CSS files are small but could definitely be better in terms of structure. But it's really a quick propotype with little thoughts towards styles scalability. But since it's small, it's super easy to modify and maintain
-- The page isn't device responsive. But the best experience, use a desktop computer.
+- Very little CSS was written, which was done mostly for layout positioning. The CSS files structure could definitely be improved. But this is done as a quick propotype. However, since they are really small and focused, it's super easy to modify and maintain
+- The page isn't device responsive. For the best experience, use a desktop computer.
 
 ### System Architecture
 
 #### Goal and State management
-The goal was to use what is needed in the project. That being said, global state is something that is avoided, and should be avoided even in a project in production.
+The goal was to use only what is needed in the project. That being said, global state is something that was avoided as it should even for a project in production as it is one way to fall into the pit of tight coupling.
 
 #### "Container" pattern
-"Container" pattern was used in the application. The beauty of container pattern is that it's self contained and autonomous. Which means that it's easy to re-use in any React project, and will play nicely in projects with other technologies.
+"Container" pattern was used in the application. The beauty of this design style is that containers are self-contained and autonomous. Which means that it's easy to re-use in any React project (just copy and paste, then install its dependencies from any node package manager). The containers would also nicely in micro-frontends and even projects with other technologies.
 
-There is no tightly coupled dependencies, and all dependencies can be easily replaced with another Provider without breaking the Container.
+There is no tightly coupled dependency, and all dependencies can be easily replaced with another Provider without breaking the Container.
 
 There is a single flow of truth, which is:
 Service (React Hook) -> Container -> Components
 
+The Service can be implemented with any technology, e.g. React Query, Redux saga, etc. that detail isn't important as long as the interface is followed. Also change a Service Provider won't lead to modification of the container.
+
 Each component communicate directly with the Container (parent), through events and direct data injection from the parent.
 
+#### Cached Result
+Since the API sends all the data, the call to the endpoint is only made once. In a real scenario, the data would be paginated on the Backend so this won't be needed. Also there would be a call to the backend once booking is successful.
+
 ## Tradeoffs
-- The functionality is not complete and the UX can be grately improved
+- UX can be grately improved
 - The hook and its utilities weren't tested
 - An expensive function was called during data transformation. The right place to do this is on input sanitization so there won't be any loop needed.
-- Dummy POST booking was used (in place a real POST endpoint)
-- Timezone wasn't considered in the implementation. This is also a good candidate to be done on the server for the sake of consistency
+- Booking submission was used as a substitute for a real POST booking endpoint
+- Timezone wasn't considered in the implementation. The suggested place to do this would be on the backend so it's consistent accross all clients
 - Only master branch was used
