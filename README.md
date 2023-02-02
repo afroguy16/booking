@@ -43,3 +43,4 @@ Each component communicate directly with the Container (parent), through events 
 - An expensive function was called during data transformation. The right place to do this is on input sanitization so there won't be any loop needed.
 - Dummy POST booking was used (in place a real POST endpoint)
 - Timezone wasn't considered in the implementation. This is also a good candidate to be done on the server for the sake of consistency
+- Only master branch was used
