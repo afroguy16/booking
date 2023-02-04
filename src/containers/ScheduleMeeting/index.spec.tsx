@@ -313,7 +313,5 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
         expect(elements).toHaveLength(2);
         done();
       });
-
-    jest.resetAllMocks();
   });
 });
