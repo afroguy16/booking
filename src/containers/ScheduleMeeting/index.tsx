@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import format from "date-fns/format";
-import { parseISO } from "date-fns/esm";
 
 import { SUCCESS_MESSAGE } from "./constants";
 import useScheduleMeeting from "./service/use-schedule-meeting";
@@ -62,7 +61,7 @@ const ScheduleMeeting = () => {
 
   const getFormattedDate = useMemo(() => {
     if (selectedDate && selectedTimeSlot.time !== "") {
-      const date = parseISO(`${selectedDate} ${selectedTimeSlot.time}`);
+      const date = new Date(`${selectedDate} ${selectedTimeSlot.time}`);
       return format(date, "PPPPp");
     }
     return "";

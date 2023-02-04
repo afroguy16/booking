@@ -20,6 +20,7 @@ const useScheduleMeeting = (): UseBookReturnPayloadI => {
     return response.data
   }
 
+  // This will result in an infinite loop if no data is returned from the BE
   const onSelectDate = async (date: string) => {
     setIsLoading(true)
     if (date !== selectedDateSchedule.date) {
