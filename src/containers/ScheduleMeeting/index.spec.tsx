@@ -1,240 +1,293 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import axios from "../../axios";
+
 import ScheduleMeeting from ".";
-import {
-  ERROR_PATH,
-  ERROR_TIME_SLOT_UNAVAILABLE,
-} from "./components/SelectTime/constants";
-import { SUCCESS_MESSAGE } from "./constants";
-import useScheduleMeeting from "./service/use-schedule-meeting";
-import { UseBookReturnPayloadI } from "./interfaces";
-import { HourT } from "./types";
+import { ERROR_TIME_SLOT_UNAVAILABLE } from "./components/SelectTime/constants";
 
-jest.mock("./service/use-schedule-meeting");
-
-const returnedData: UseBookReturnPayloadI = {
-  selectedDateBookedTimeSlots: [],
-  error: "",
-  isSuccessful: false,
-  isLoading: false,
-  onSelectDate: jest.fn(),
-  onSetError: jest.fn(),
-  onClearError: jest.fn(),
-  onClearSuccess: jest.fn(),
-  onSetBooking: jest.fn(),
+const fakeResponse = {
+  data: {
+    mentor: {
+      name: "Max Mustermann",
+      time_zone: "-03:00",
+    },
+    calendar: [
+      {
+        date_time: "2023-01-23 13:00:00 +0100",
+      },
+      {
+        date_time: "2023-01-23 13:00:00 +0100", // should only show one of this duplicate in the UI
+      },
+      {
+        date_time: "2023-01-23 14:00:00 +0100",
+      },
+      ,
+      {
+        date_time: "2023-01-25 09:00:00 +0100",
+      },
+      {
+        date_time: "2023-01-27 09:00:00 +0100",
+      },
+    ],
+  },
 };
+
+jest.mock("../../axios");
 
 describe("ScheduleMeeting Container", () => {
   afterEach(jest.resetAllMocks);
 
-  it("should display the error message if there is an error", () => {
-    const error = "fake error";
-    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
+  it("should display the error message if there is an error is sent from the child, e.g. SelectTime component", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
 
     render(<ScheduleMeeting />);
 
+    // 1. Date is selected on page load
+    // 2. Select a time slot
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", { name: "confirm time slot" })
+      .at(3)!; // "03:00"
+    await user.click(randomAvailableTimeSlot);
+
+    // 3. Click on the "Confirm time slot button"
+    const confirmSlotButtonElement = screen.getByText(/confirm time slot/i);
+    await user.click(confirmSlotButtonElement);
+
+    // 4. Type in the reason for the call
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+
+    // 5. Click on the "confirm meeting" button
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    await user.click(bookCallButtonElement);
+
+    // 6. Wait for it to finish loading. Once that is done, the modal would be removed from the DOM
+    await waitForElementToBeRemoved(inputFieldElement);
+
+    // 7. Click on the "Confirm time slot button" to book the same date that was just booked
+    await user.click(confirmSlotButtonElement);
+
     const errorElement = screen.getByRole("error");
-    expect(errorElement).toHaveTextContent(error);
+    expect(errorElement).toHaveTextContent(ERROR_TIME_SLOT_UNAVAILABLE);
 
     const successElement = screen.queryByRole("success");
     expect(successElement).not.toBeInTheDocument();
   });
 
-  it("should display the success message if there a success message", () => {
-    jest
-      .mocked(useScheduleMeeting)
-      .mockReturnValue({ ...returnedData, isSuccessful: true });
+  it("should clear error if the close button in the error Alert is clicked", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
 
     render(<ScheduleMeeting />);
+
+    // 1. Date is selected on page load
+    // 2. Select a time slot
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", { name: "confirm time slot" })
+      .at(3)!; // "03:00"
+    await user.click(randomAvailableTimeSlot);
+
+    // 3. Click on the "Confirm time slot button"
+    const confirmSlotButtonElement = screen.getByText(/confirm time slot/i);
+    await user.click(confirmSlotButtonElement);
+
+    // 4. Type in the reason for the call
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+
+    // 5. Click on the "confirm meeting" button
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    await user.click(bookCallButtonElement);
+
+    // 6. Wait for it to finish loading. Once that is done, the modal would be removed from the DOM
+    await waitForElementToBeRemoved(inputFieldElement);
+
+    // 7. Click on the "Confirm time slot button" to book the same date that was just booked
+    await user.click(confirmSlotButtonElement);
+
+    const errorElement = screen.getByRole("error");
+    expect(errorElement).toBeInTheDocument();
+
+    const closeButtonElement = screen.getByRole("button", { name: /close/i });
+    await user.click(closeButtonElement);
+
+    expect(errorElement).not.toBeInTheDocument();
+  });
+
+  it("should clear error if a clear error action is triggered from any child", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
+
+    render(<ScheduleMeeting />);
+
+    // 1. Date is selected on page load
+    // 2. Select a time slot
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", { name: "confirm time slot" })
+      .at(3)!; // "03:00"
+    await user.click(randomAvailableTimeSlot);
+
+    // 3. Click on the "Confirm time slot button"
+    const confirmSlotButtonElement = screen.getByText(/confirm time slot/i);
+    await user.click(confirmSlotButtonElement);
+
+    // 4. Type in the reason for the call
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+
+    // 5. Click on the "confirm meeting" button
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    await user.click(bookCallButtonElement);
+
+    // 6. Wait for it to finish loading. Once that is done, the modal would be removed from the DOM
+    await waitForElementToBeRemoved(inputFieldElement);
+
+    // 7. Click on the "Confirm time slot button" to book the same date that was just booked
+    await user.click(confirmSlotButtonElement);
+
+    const errorElement = screen.getByRole("error");
+    expect(errorElement).toBeInTheDocument();
+
+    //8. Click on a time slot
+    await user.click(randomAvailableTimeSlot);
+    expect(errorElement).not.toBeInTheDocument();
+  });
+
+  it("should close the input Confirm message modal if the cancel button is clicked", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
+
+    render(<ScheduleMeeting />);
+
+    // 1. Date is selected on page load
+    // 2. Select a time slot
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", { name: "confirm time slot" })
+      .at(3)!; // "03:00"
+    await user.click(randomAvailableTimeSlot);
+
+    // 3. Click on the "Confirm time slot button"
+    const confirmSlotButtonElement = screen.getByText(/confirm time slot/i);
+    await user.click(confirmSlotButtonElement);
+
+    // 4. Type in the reason for the call
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+
+    // 5. Click on the "confirm meeting" button
+    const cancelConfirmMeetingSlotButtonElement = screen.getByText(/cancel/i);
+    await user.click(cancelConfirmMeetingSlotButtonElement);
+
+    await waitForElementToBeRemoved(inputFieldElement);
+    expect(inputFieldElement).not.toBeInTheDocument();
+  });
+
+  it("should display the success message if there a success message", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
+
+    render(<ScheduleMeeting />);
+
+    // 1. Date is selected on page load
+    // 2. Select a time slot
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", { name: "confirm time slot" })
+      .at(3)!; // "03:00"
+    await user.click(randomAvailableTimeSlot);
+
+    // 3. Click on the "Confirm time slot button"
+    const confirmSlotButtonElement = screen.getByText(/confirm time slot/i);
+    await user.click(confirmSlotButtonElement);
+
+    // 4. Type in the reason for the call
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+
+    // 5. Click on the "confirm meeting" button
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    await user.click(bookCallButtonElement);
+
+    // 6. Wait for it to finish loading. Once that is done, the modal would be removed from the DOM
+    await waitForElementToBeRemoved(inputFieldElement);
+
+    const successElement = screen.getByRole("success");
+    expect(successElement).toBeInTheDocument();
 
     const errorElement = screen.queryByRole("error");
     expect(errorElement).not.toBeInTheDocument();
+  });
+
+  it("should clear success if a clear success action is triggered from any child", async () => {
+    const fakeReasonForCall = "Just some random reason for the call";
+    const user = userEvent.setup();
+
+    render(<ScheduleMeeting />);
+
+    // 1. Date is selected on page load
+    // 2. Select a time slot
+    const randomAvailableTimeSlot = screen
+      .getAllByRole("option", { name: "confirm time slot" })
+      .at(3)!; // "03:00"
+    await user.click(randomAvailableTimeSlot);
+
+    // 3. Click on the "Confirm time slot button"
+    const confirmSlotButtonElement = screen.getByText(/confirm time slot/i);
+    await user.click(confirmSlotButtonElement);
+
+    // 4. Type in the reason for the call
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+
+    // 5. Click on the "confirm meeting" button
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    await user.click(bookCallButtonElement);
+
+    // 6. Wait for it to finish loading. Once that is done, the modal would be removed from the DOM
+    await waitForElementToBeRemoved(inputFieldElement);
 
     const successElement = screen.getByRole("success");
-    expect(successElement).toHaveTextContent(SUCCESS_MESSAGE);
-  });
+    expect(successElement).toBeInTheDocument();
 
-  it("should call onClearError if onClearMesage is triggered if the close button in the error message is clicked", async () => {
-    const error = "fake error";
-    const { onClearError, onClearSuccess } = returnedData;
-    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
-    const user = userEvent.setup();
-
-    render(<ScheduleMeeting />);
-
-    const closeButtonElement = screen.getByRole("button", { name: /close/i });
-    await user.click(closeButtonElement);
-    expect(onClearError).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
-    expect(onClearSuccess).not.toHaveBeenCalled();
-  });
-
-  it("should call onClearError if onClearMesage is called from child (SelectDate) and there is error message", () => {
-    const error = "fake error";
-    const { onClearError, onClearSuccess } = returnedData;
-
-    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
-    render(<ScheduleMeeting />);
-
-    expect(onClearError).toHaveBeenCalledTimes(1); // called when SelectDate is mounted if there is an existing error
-    expect(onClearSuccess).not.toHaveBeenCalled();
-  });
-
-  it("should call onClearError if onClearMesage is called from child (Confirm meeting) and there is error message", async () => {
-    const error = "fake error";
-    const user = userEvent.setup();
-    const { onClearError, onClearSuccess } = returnedData;
-
-    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData, error });
-    render(<ScheduleMeeting />);
-
-    const randomAvailableTimeSlot = screen
-      .getAllByRole("option", {
-        name: /confirm time slot/i,
-      })
-      .at(2)!; // "02:00"
     await user.click(randomAvailableTimeSlot);
+    expect(successElement).not.toBeInTheDocument();
 
-    expect(onClearError).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
-    expect(onClearSuccess).not.toHaveBeenCalled();
-  });
-
-  it("should call onClearSuccess if onClearMesage is triggered from the children or if the close button is clicked and there is a success message", async () => {
-    const { onClearError, onClearSuccess } = returnedData;
-    jest
-      .mocked(useScheduleMeeting)
-      .mockReturnValue({ ...returnedData, isSuccessful: true });
-    const user = userEvent.setup();
-
-    render(<ScheduleMeeting />);
-
-    const closeButtonElement = screen.getByRole("button", { name: /close/i });
-    await user.click(closeButtonElement);
-    expect(onClearSuccess).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
-    expect(onClearError).not.toHaveBeenCalled();
-  });
-
-  it("should call onClearSuccess if onClearMesage is called from child (SelectDate) and there is a success message", () => {
-    const { onClearError, onClearSuccess } = returnedData;
-
-    jest
-      .mocked(useScheduleMeeting)
-      .mockReturnValue({ ...returnedData, isSuccessful: true });
-    render(<ScheduleMeeting />);
-
-    expect(onClearSuccess).toHaveBeenCalledTimes(1); // called when SelectDate is mounted if there is an existing error
-    expect(onClearError).not.toHaveBeenCalled();
-  });
-
-  it("should call onClearSuccess if onClearMesage is called from child (SelectTime) and there is a success message", async () => {
-    const user = userEvent.setup();
-    const { onClearError, onClearSuccess } = returnedData;
-
-    jest
-      .mocked(useScheduleMeeting)
-      .mockReturnValue({ ...returnedData, isSuccessful: true });
-    render(<ScheduleMeeting />);
-
-    const randomAvailableTimeSlot = screen
-      .getAllByRole("option", {
-        name: /confirm time slot/i,
-      })
-      .at(2)!; // "02:00"
-    await user.click(randomAvailableTimeSlot);
-
-    expect(onClearSuccess).toHaveBeenCalledTimes(2); // called twice. the first one is called when SelectDate is mounted, and the second call when the button is clicked.
-    expect(onClearError).not.toHaveBeenCalled();
-  });
-
-  it("should set the selected date and time in the SelectTime child", () => {
-    const fakeBookedTimeSlot: Array<HourT> = [
-      "00:00",
-      "03:00",
-      "04:00",
-      "04:00", // duplicates will be filtered out by SelectTime. This is an unlikely scenario because the endpoint won't send two blocked time
-    ];
-    jest.mocked(useScheduleMeeting).mockReturnValue({
-      ...returnedData,
-      selectedDateBookedTimeSlots: fakeBookedTimeSlot,
-    });
-
-    const { baseElement } = render(<ScheduleMeeting />);
-
-    const optionElements = baseElement.getElementsByClassName("unavailable");
-    expect(optionElements).toHaveLength(3);
-  });
-
-  it("should display confirming if confirming is received from the store", async () => {
-    const user = userEvent.setup();
-    jest
-      .mocked(useScheduleMeeting)
-      .mockReturnValue({ ...returnedData, isLoading: true });
-    render(<ScheduleMeeting />);
-
-    const randomAvailableTimeSlot = screen
-      .getAllByRole("option", {
-        name: /confirm time slot/i,
-      })
-      .at(2)!; // "02:00"
-    await user.click(randomAvailableTimeSlot);
-
-    const selectButtonElement = screen.getByText(/confirm time slot/i);
-    await user.click(selectButtonElement);
-
-    const loadingText = screen.getByText(/confirming/i);
-    expect(loadingText).toBeInTheDocument();
-  });
-
-  it("should not display confirming if confirming isn't received from the store", async () => {
-    const user = userEvent.setup();
-    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData });
-    render(<ScheduleMeeting />);
-
-    const randomAvailableTimeSlot = screen
-      .getAllByRole("option", {
-        name: /confirm time slot/i,
-      })
-      .at(2)!; // "02:00"
-    await user.click(randomAvailableTimeSlot);
-
-    const selectButtonElement = screen.getByText(/confirm time slot/i);
-    await user.click(selectButtonElement);
-
-    const loadingText = screen.queryByText("confirming");
+    const loadingText = screen.queryByText(/confirming/i);
     expect(loadingText).not.toBeInTheDocument();
   });
 
-  // TODO - A better UX would be to disable the slots, so they aren't clickable
-  it("should call onSetError if the requested time slot isn't available", async () => {
-    const { onSetError } = returnedData;
+  it("should display confirming while a time slot is confirming", async () => {
     const fakeReasonForCall = "Just some random reason for the call";
-    const fakeBookedTimeSlot: Array<HourT> = [
-      "00:00",
-      "03:00",
-      "04:00",
-      "04:00", // duplicates will be filtered out by SelectTime. This is an unlikely scenario because the endpoint won't send two blocked time
-    ];
     const user = userEvent.setup();
-    jest.mocked(useScheduleMeeting).mockReturnValue({
-      ...returnedData,
-      selectedDateBookedTimeSlots: fakeBookedTimeSlot,
-    });
+
     render(<ScheduleMeeting />);
 
+    // 1. Date is selected on page load
+    // 2. Select a time slot
     const randomAvailableTimeSlot = screen
-      .getAllByRole("option", {
-        name: /confirm time slot/i,
-      })
-      .at(4)!; // "04:00"
+      .getAllByRole("option", { name: "confirm time slot" })
+      .at(3)!; // "03:00"
     await user.click(randomAvailableTimeSlot);
 
-    const selectButtonElement = screen.getByText(/confirm time slot/i);
-    await user.click(selectButtonElement);
+    // 3. Click on the "Confirm time slot button"
+    const confirmSlotButtonElement = screen.getByText(/confirm time slot/i);
+    await user.click(confirmSlotButtonElement);
 
-    expect(onSetError).toHaveBeenCalledWith({
-      path: ERROR_PATH,
-      message: ERROR_TIME_SLOT_UNAVAILABLE,
-    });
+    // 4. Type in the reason for the call
+    const inputFieldElement = screen.getByRole("textbox");
+    await user.type(inputFieldElement, fakeReasonForCall);
+
+    // 5. Click on the "confirm meeting" button
+    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
+    await user.click(bookCallButtonElement);
+
+    const loadingText = screen.getByText(/confirming/i);
+    expect(loadingText).toBeInTheDocument();
   });
 });
 
@@ -246,45 +299,21 @@ describe("ScheduleMeeting Container - with Fake Timer", () => {
     jest.useRealTimers();
   });
 
-  it("should call onSelectDate when a date is selected from SelectDate", () => {
-    const fakeToday = "2023-01-01";
-    const { onSelectDate } = returnedData;
+  it("should set the selected date and time in the SelectTime child", (done) => {
+    const fakeToday = "2023-01-23";
     jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
-    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData });
+    jest.mocked(axios.get).mockResolvedValue({ ...fakeResponse });
+
     render(<ScheduleMeeting />);
-
-    expect(onSelectDate).toHaveBeenNthCalledWith(1, fakeToday);
-  });
-
-  it("should package the payload and call onSetBooking with the payload payLoad once a Booking is confirmed", () => {
-    const fakeToday = "2023-01-01";
-    const fakeReasonForCall = "Just some random reason for the call";
-    const { onSetBooking } = returnedData;
-
-    jest.useFakeTimers("modern").setSystemTime(new Date(fakeToday)); // today's date is mocked so that the test will always pass irrespective of the current date
-    jest.mocked(useScheduleMeeting).mockReturnValue({ ...returnedData });
-    render(<ScheduleMeeting />);
-
-    const randomAvailableTimeSlot = screen
-      .getAllByRole("option", {
-        name: /confirm time slot/i,
+    screen
+      .findAllByRole("option", {
+        name: /unavailable time slot/i,
       })
-      .at(4)!; // "04:00"
-    fireEvent.click(randomAvailableTimeSlot);
+      .then((elements) => {
+        expect(elements).toHaveLength(2);
+        done();
+      });
 
-    const selectButtonElement = screen.getByText(/confirm time slot/i);
-    fireEvent.click(selectButtonElement);
-
-    const inputFieldElement = screen.getByRole("textbox");
-    const bookCallButtonElement = screen.getByText(/Confirm meeting/i);
-    fireEvent.change(inputFieldElement, {
-      target: { value: fakeReasonForCall },
-    });
-    fireEvent.click(bookCallButtonElement);
-    expect(onSetBooking).toHaveBeenCalledWith({
-      time: "04:00",
-      date: "2023-01-01",
-      reason: fakeReasonForCall,
-    });
+    jest.resetAllMocks();
   });
 });

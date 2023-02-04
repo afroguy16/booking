@@ -80,7 +80,11 @@ const SelectTime = (props: SelectTimePropsI) => {
         <ListItem
           sx={timeSlotStyles}
           role={"option"}
-          aria-label="confirm time slot"
+          aria-label={
+            isTimeTaken(timeSlot)
+              ? "unavailable time slot"
+              : "confirm time slot"
+          }
           key={timeSlot}
           className={[
             isTimeTaken(timeSlot) ? "unavailable" : "",

@@ -49,7 +49,7 @@ const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): 
   //     date_time: ["2023-01-27, 09:00:00, +0100"]
   //   },
   // ]
-  rawCalendar.forEach(rawDate => {
+  rawCalendar?.forEach(rawDate => {
     splitCalendar.push(rawDate.date_time.split(" "))
   })
 
@@ -81,11 +81,11 @@ const getExtractedMentorSchedule = (rawCalendar: Array<{ date_time: string }>): 
  * @return {MentorScheduleCollectionI} Formatted mentor schedule collection
  */
 const getPackagedMentorTotalSchedule = (rawMentorSchedule: MentorScheduleResponsePayloadI): MentorScheduleCollectionI => {
-  const schedule = getExtractedMentorSchedule(rawMentorSchedule.calendar)
+  const schedule = getExtractedMentorSchedule(rawMentorSchedule?.calendar)
   return ({
     mentor: {
-      name: rawMentorSchedule.mentor.name,
-      time_zone: rawMentorSchedule.mentor.time_zone
+      name: rawMentorSchedule?.mentor.name,
+      time_zone: rawMentorSchedule?.mentor.time_zone
     },
     schedule
   })

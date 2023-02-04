@@ -14,10 +14,11 @@ const useScheduleMeeting = (): UseBookReturnPayloadI => {
   const [isLoading, setIsLoading] = useState(false);
   const mentorsTotalSchedule = useRef({ mentor: { name: '', time_zone: '' }, schedule: {} as { [key: string]: Array<HourT> } })
   const [selectedDateSchedule, setSelectedDateSchedule] = useState<MentorScheduleAttributesI>({ date: '', timeCollection: [] });
+  const mentorDataFetchedSuccessfully = useRef(false)
 
   const fetchMentorSchedule = async () => {
     const response = await axios.get<MentorScheduleResponsePayloadI>(GET_MENTOR_AGENDA_URL)
-    return response.data
+    return response?.data
   }
 
   // This will result in an infinite loop if no data is returned from the BE
@@ -25,12 +26,13 @@ const useScheduleMeeting = (): UseBookReturnPayloadI => {
     setIsLoading(true)
     if (date !== selectedDateSchedule.date) {
       // only make call and call the expensive functions above ones
-      if (Object.keys(mentorsTotalSchedule.current.schedule).length < 1) {
+      if (Object.keys(mentorsTotalSchedule.current.schedule).length < 1 && !mentorDataFetchedSuccessfully.current) {
         try {
           const mentorSchedule = await fetchMentorSchedule()
           const packagedData = getPackagedMentorTotalSchedule(mentorSchedule)
           mentorsTotalSchedule.current.mentor = { ...packagedData.mentor }
           mentorsTotalSchedule.current.schedule = { ...packagedData.schedule }
+          mentorDataFetchedSuccessfully.current = true;
           onSelectDate(date)
         } catch (e) {
           // Overwrite error - could send error to a logger
